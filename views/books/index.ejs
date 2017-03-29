@@ -1,0 +1,11 @@
+<% include ../partials/header %>
+Books list
+<br>
+<% books.forEach(function(book) { %>
+<a href="/books/<%= book._id %>">   <%= book.name %> </a>
+   <br />
+   <%= book.price %>
+   <br />
+<% }) %>
+
+<% include ../partials/footer %>
