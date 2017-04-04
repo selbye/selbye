@@ -8,11 +8,15 @@ var mongoose = require("mongoose"),
     User = require("./models/user"),
     Book = require("./models/book"),
     fs = require("file-system"),
-    multer = require('multer');
+    multer = require('multer'),
+    server = require("http").Server(app),
+    io = require('socket.io')(server);
+
 
 var currUsr = "";
 var temp_user;
 var file_name;
+var doesExist = false;
 
 
 mongoose.Promise = global.Promise;
@@ -42,14 +46,23 @@ app.use(function (req, res, next) {
     // console.log(req.user.username)
     currUsr = res.locals.currentUser;
     //if logged in then this: else currentUser isequals undefined
-    if(currUsr!=undefined){
-    //store currentUser in temp_user
-    temp_user = currUsr.username;
-    // temp_user = currUsr.username;
-    // temp_user2    = window.temp_user;
-}
+    if (currUsr != undefined) {
+        //store currentUser in temp_user
+        temp_user = currUsr.username;
+        // temp_user = currUsr.username;
+        // temp_user2    = window.temp_user;
+    }
     next();
 })
+var findBook = function findBook(req, res){
+    Book.find({'owner.username':req.user.username}).exec(function(err, foundBook){
+        if(err){
+            console.log(err)
+        }else{
+            res.render("users/show", {books: foundBook})
+        }
+    })
+}
 
 app.get("/", function (req, res) {
     //res.send("success")
@@ -62,12 +75,12 @@ var storage = multer.diskStorage({
         //fs.mkdir will create new directory at /images/username for each user
         fs.mkdir("images/" + temp_user)
         //call back will store image at /images/username
-        callback(null,"images/"+temp_user);
+        callback(null, "images/" + temp_user);
     },
     filename: function (request, file, callback) {
-                // callback(null, file.originalname)
-        file_name = file.originalname;
-        callback(null,file.originalname)
+    file_name = file.originalname;
+        callback(null, file.originalname)
+        //   callback(null, request.Book.id.toString())
     }
 });
 var upload = multer({ storage: storage });
@@ -76,7 +89,12 @@ var upload = multer({ storage: storage });
 app.get("/books/new", function (req, res) {
     res.render("books/new.ejs")
 })
-
+// //Check if file already exists
+// fs.readdir('images/', (err, files) => {
+//     files.forEach(file => {
+//         console.log(file);
+//     });
+// })
 
 //CREATE BOOK logic
 //upload.single will add new photo
@@ -84,10 +102,14 @@ app.post("/books", upload.single('photo'), function (req, res, next) {
     var name = req.body.name;
     var price = req.body.price;
     var desc = req.body.desc;
+    // Owner array contains username and userID
+    var owner = {
+        id: req.user._id,
+        username: req.user.username
+    }
     //image path from /images/username/filename directory
-    var image  = ("/"+temp_user + "/" + file_name);
-    // console.log(image)
-    var newBook = { name: name, price: price, desc: desc , image:image }
+    var image = ("/" + temp_user + "/" + file_name);
+    var newBook = { name: name, price: price, desc: desc, image: image, owner: owner }
     Book.create(newBook, function (err, newlyCreated) {
         if (err) {
             console.log(err)
@@ -95,21 +117,9 @@ app.post("/books", upload.single('photo'), function (req, res, next) {
             res.redirect("/books")
         }
     })
-    // upload.fields([{name: 'photo', maxCount: 1 }])
-    // console.log(req.body.image)
-    // console.log(req.file)
-    // console.log(req.files)  
 })
 
 
-// app.get("/mult", function(req, res){
-//     res.render("mult.ejs")
-// })
-
-// app.post("/multt",upload.any(),  function(req, res ,next){
-//     res.redirect("/mult")
-//     nameoffile= "hello";
-// })
 //Update book info
 // app.put("/books/:id", function(req, res){
 //     Book.findByIdAndUpdate()
@@ -136,6 +146,17 @@ app.get("/books", function (req, res) {
         }
     })
 })
+
+//Socket test
+app.get("/socket", function(req, res){
+    res.render("socket")
+})
+
+io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+});
 
 //AUTHENTICATION ROUTES
 app.get("/register", function (req, res) {
@@ -173,6 +194,25 @@ app.get("/logout", function (req, res) {
 })
 
 
+//Users
+// app.get("/user/:id",findBook() ,function(req, res){
+//     User.findById(req.params.id).exec(function(err, foundUser){
+//         if(err){
+//             console.log(err)
+//         }else{
+//             res.render("users/show", {currentUser: foundUser})
+//         }
+//     })
+//     // res.render("users/show");
+// })
+// app.get("/user/:id", findBook);
+//    console.log(temp_user+ "temp2")
+
+
+    // res.render("users/show");
+
+
+
 //isLogin middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
@@ -185,7 +225,8 @@ app.get("*", function (req, res) {
     res.send("Error 404");
 });
 
-app.listen(3000, function () {
+
+server.listen(3000, function () {
     console.log("server started");
 });
 

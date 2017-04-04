@@ -4,6 +4,8 @@ Books list
 <% books.forEach(function(book) { %>
 <a href="/books/<%= book._id %>">   <%= book.name %> </a>
    <br />
+   <img src= "<%= book.image %>" height="500" width="500" >
+   <br />
    <%= book.price %>
    <br />
 <% }) %>

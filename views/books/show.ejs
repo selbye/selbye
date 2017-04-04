@@ -1,7 +1,12 @@
 <% include ../partials/header %>
-show page
 
-<%= books.name %>
+Book name: <%= books.name %>
+<br />
+<!--Book owners name-->
+owner: 
+<%= books.owner.username %>
+<br />
+<br />
 <img src = "<%= books.image %>">  
 
 <br>
