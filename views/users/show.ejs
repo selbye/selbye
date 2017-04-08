@@ -1,9 +1,12 @@
-<%= currentUser.username %>
-<%= currentUser.id %>
+<% include ../partials/header %>
 
+Change profile: 
+<a href="/user/<%= currentUser.username%>/profile"> Change </a>
 <% books.forEach(function(books){ %>
     <%= books.name %>
+    <img src="<%= books.image %>" />
+    <br />
+    
 <% }) %>
 <br />
- <%= books.name %>
-working
+<%= usr %>

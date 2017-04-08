@@ -20,8 +20,7 @@
                         <li><a href="/login"> Login </a> </li>
                         <li><a href="/register"> Sign up </a> </li>
                         <% } else{ %>
-                            <li><a href="/user/<%= currentUser.id %>"> Signed in as <%= currentUser.username %> </a></li>
-                            <li><a href="#"> Signed in as <%= currentUser.id %> </a></li>
+                            <li><a href="/user/<%= currentUser.username %>"> Signed in as <%= currentUser.username %> </a></li>
                             <li><a href="/logout">Log out </a> </li>
                             <% } %>
                 </ul>

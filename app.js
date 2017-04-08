@@ -55,11 +55,14 @@ app.use(function (req, res, next) {
     next();
 })
 var findBook = function findBook(req, res){
-    Book.find({'owner.username':req.user.username}).exec(function(err, foundBook){
+        // Book.find({'owner.username':req.user.username}).exec(function(err, foundBook){
+    Book.find({'owner.username':req.params.id}).exec(function(err, foundBook){
         if(err){
             console.log(err)
         }else{
-            res.render("users/show", {books: foundBook})
+            //pass found book and requested username
+            res.render("users/show", {books: foundBook, usr: req.params.id})
+            console.log(foundBook.owner)
         }
     })
 }
@@ -124,6 +127,16 @@ app.post("/books", upload.single('photo'), function (req, res, next) {
 // app.put("/books/:id", function(req, res){
 //     Book.findByIdAndUpdate()
 // })
+
+app.delete("/books/:id", function(req, res){
+    Book.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            console.log(err)
+        }else{
+            res.redirect("/books")
+        }
+    })
+})
 
 //SHOW page AKA book page
 app.get("/books/:id", function (req, res) {
@@ -194,24 +207,28 @@ app.get("/logout", function (req, res) {
 })
 
 
-//Users
-// app.get("/user/:id",findBook() ,function(req, res){
-//     User.findById(req.params.id).exec(function(err, foundUser){
-//         if(err){
-//             console.log(err)
-//         }else{
-//             res.render("users/show", {currentUser: foundUser})
-//         }
-//     })
-//     // res.render("users/show");
-// })
-// app.get("/user/:id", findBook);
-//    console.log(temp_user+ "temp2")
+// User profile
+app.get("/user/:id", findBook);
 
+//Messages 
+app.get("/message/:id", function(req, res){
+    res.send("worksls")
+})
 
-    // res.render("users/show");
+app.get("/user/:id/profile", function(req, res){
+    res.render("users/profile");
+})
 
-
+app.put("/user/:id", function(req, res){
+    console.log(req.body.user.email)
+    User.findOneAndUpdate({username:req.params.id}, req.body.user).exec(function(err, founduser){
+        if(err){
+            console.log(err)
+        }else{
+            res.redirect("back")
+        }
+    })
+})
 
 //isLogin middleware
 function isLoggedIn(req, res, next) {

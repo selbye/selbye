@@ -5,10 +5,17 @@ Book name: <%= books.name %>
 <!--Book owners name-->
 owner: 
 <%= books.owner.username %>
+
+profile:
+<a href="/user/<%= books.owner.username %>"> profile </a>
 <br />
 <br />
 <img src = "<%= books.image %>">  
 
 <br>
+Delete:
+<form id="delete-form" action="/books/<%= books._id %>?_method=DELETE" method="POST">
+<input type="submit" value="Delete">
+</form>
 
 <% include ../partials/footer %>
