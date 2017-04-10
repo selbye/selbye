@@ -2,7 +2,8 @@ profile page
 change settings
 
 <form action="/user/<%= currentUser.username %>?_method=PUT" method="POST">
-    <input type="email" name="user[email]" value="email">
-    <input type="number" name="user[contactno]" >
+   E-mail: <input type="email" name="user[email]">
+   <br>
+    Contact number: <input type="number" name="user[contactno]" >
     <input type="submit">
 </form>

@@ -1,0 +1,42 @@
+<html>
+    <!--<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>   style="display:none;"-->
+<body>
+<iframe src= "" name="votar" ></iframe>
+<iframe name="votar2" ></iframe>
+
+<form id="nope" target="votar" method="get">
+    <input type="text" id="colorcode">
+    <input type="submit" onclick="">
+</form>
+<h1 id="h1t"></h1>
+</body>
+</html>
+<script>
+    var form= document.getElementById("nope");
+    form.onsubmit = function(){
+        form.target = "votar";
+    }
+    function func(){
+    var str= document.getElementById("colorcode").value;
+   var num = "aa"
+   document.getElementById("nope").action="http://kunalht.com/";
+      document.getElementById("nope").action="http://kunalht.com/";
+
+    }
+   
+//    $('#nope').submit(function(e){
+//     e.preventDefault();
+//     $.ajax({
+//         url:'/Car/Edit/17/',
+//         type:'get',
+//         data:$('#nope').serialize(),
+//         success:function(){
+//             $('#h1t').text('done');
+//         }
+//     });
+// });
+//    console.log(str)
+</script>
