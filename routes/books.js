@@ -5,6 +5,19 @@ var  fs = require("file-system"),
 var User = require("../models/user"),
     Book = require("../models/book");
 
+router.use(function (req, res, next) {
+    res.locals.currentUser = req.user;
+    currUsr = res.locals.currentUser;
+    //if logged in then this: else currentUser isequals undefined
+    if (currUsr != undefined) {
+        //store currentUser in temp_user
+        temp_user = currUsr.username;
+        // temp_user = currUsr.username;
+        // temp_user2    = window.temp_user;
+    }
+    next();
+})
+
 
 
 router.get("/", function (req, res) {
@@ -99,3 +112,5 @@ router.get("/books", function (req, res) {
         }
     })
 })
+
+module.exports = router;

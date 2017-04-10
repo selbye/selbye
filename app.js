@@ -16,7 +16,7 @@ var mongoose = require("mongoose"),
 // app.use(multer({dest:'./uploads/'}))
 
 var bookRoutes = require("./routes/books"),
-    userRotes = require("./routes/users"),
+    userRoutes = require("./routes/users"),
     indexRoutes = require("./routes/index")
 
 
@@ -50,7 +50,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(indexRoutes);
-app.use(userRotes);
+app.use(userRoutes);
 app.use(bookRoutes);
 
 app.use(function (req, res, next) {
