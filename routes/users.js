@@ -3,6 +3,8 @@ var router = express.Router({mergeParams: true});
 var User = require("../models/user"),
     Book = require("../models/book");
 
+
+
 router.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     currUsr = res.locals.currentUser;

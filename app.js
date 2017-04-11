@@ -5,6 +5,7 @@ var mongoose = require("mongoose"),
     methodOverride = require("method-override"),
     passport = require("passport"),
     localStrategy = require("passport-local"),
+    FacebookStrategy = require("passport-facebook"),
     User = require("./models/user"),
     Book = require("./models/book"),
     fs = require("file-system"),
@@ -46,9 +47,56 @@ app.use(require("express-session")({
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()));
+
+
+passport.use(new FacebookStrategy({
+    clientID: 1437501352988595,
+    clientSecret: "c6561bc448934e420783c46363d84e52",
+    callbackURL: 'http://localhost:3000/login/facebook/return',
+    profileFields: ['id', 'displayName', 'name', 'email']
+  },
+  function(accessToken, refreshToken, profile, cb) {
+       process.nextTick(function() {
+           console.log(profile)
+      User.findOne({ 'facebook.id': profile.id }, function(err, user) {
+        if (err)
+          return cb(err);
+        if (user) {
+          return cb(null, user);
+
+        //   passport.serializeUser();
+    } else {
+          var newUser = new User();
+          newUser.facebook.id = profile.id;
+          newUser.facebook.token = accessToken;
+          newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+          newUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
+          newUser.save(function(err) {
+            if (err)
+              throw err;
+            return cb(null, newUser);
+          });
+        }
+      });
+    });
+    // User.findOrCreate({ 
+    //     'facebook.id': profile.id,
+    //     'facebook.token': accessToken,
+    //     // email: profile.emails[0].value
+    //  }, function (err, user) {
+    //      if(err){
+    //          console.log(err)
+    //      }else{
+    //      console.log(user);
+    //   return cb(err, user);
+    //      }
+    // });
+    // console.log(db);
+    // console.log(profile)
+  }
+));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 app.use(indexRoutes);
 app.use(userRoutes);
 app.use(bookRoutes);

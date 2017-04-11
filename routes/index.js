@@ -1,8 +1,25 @@
 var express = require("express");
 var router = express.Router();
-var passport = require("passport");
+var passport = require("passport"),
+    FacebookStrategy = require("passport-facebook");
 var User = require("../models/user"),
     Book = require("../models/book");
+
+// passport.use(new FacebookStrategy({
+//     // clientID: 1437501352988595,
+//     // clientSecret: "c6561bc448934e420783c46363d84e52",
+//     // callbackURL: "http://localhost:3000/auth/facebook/callback"
+//     clientID: process.env.CLIENT_ID,
+//     clientSecret: process.env.CLIENT_SECRET,
+//     callbackURL: 'http://localhost:3000/login/facebook/return'
+//   },
+//   function(accessToken, refreshToken, profile, cb) {
+//     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+//       return cb(err, user);
+//     });
+//   }
+// ));
+
 
 router.use(function (req, res, next) {
     res.locals.currentUser = req.user;
@@ -15,6 +32,13 @@ router.use(function (req, res, next) {
         // temp_user2    = window.temp_user;
     }
     next();
+})
+router.get('/login/facebook', passport.authenticate('facebook',{scope: ['email', 'public_profile']}));
+
+router.get('/login/facebook/return',
+passport.authenticate('facebook', { failureRedirect: '/login' , session: false}),
+  function(req, res) {
+    res.redirect('/');
 })
 
 
