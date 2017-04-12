@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var  fs = require("file-system"),
+var fs = require("file-system"),
     multer = require('multer')
 var User = require("../models/user"),
     Book = require("../models/book");
@@ -34,7 +34,7 @@ var storage = multer.diskStorage({
         callback(null, "images/" + temp_user);
     },
     filename: function (request, file, callback) {
-    file_name = file.originalname;
+        file_name = file.originalname;
         callback(null, file.originalname)
         //   callback(null, request.Book.id.toString())
     }
@@ -81,11 +81,11 @@ router.post("/books", upload.single('photo'), function (req, res, next) {
 //     Book.findByIdAndUpdate()
 // })
 
-router.delete("/books/:id", function(req, res){
-    Book.findByIdAndRemove(req.params.id, function(err){
-        if(err){
+router.delete("/books/:id", function (req, res) {
+    Book.findByIdAndRemove(req.params.id, function (err) {
+        if (err) {
             console.log(err)
-        }else{
+        } else {
             res.redirect("/books")
         }
     })

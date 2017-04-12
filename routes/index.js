@@ -1,24 +1,10 @@
 var express = require("express");
 var router = express.Router();
 var passport = require("passport"),
-    FacebookStrategy = require("passport-facebook");
+    FacebookStrategy = require("passport-facebook"),
+    GoogleStrategy   = require("passport-google-oauth");
 var User = require("../models/user"),
     Book = require("../models/book");
-
-// passport.use(new FacebookStrategy({
-//     // clientID: 1437501352988595,
-//     // clientSecret: "c6561bc448934e420783c46363d84e52",
-//     // callbackURL: "http://localhost:3000/auth/facebook/callback"
-//     clientID: process.env.CLIENT_ID,
-//     clientSecret: process.env.CLIENT_SECRET,
-//     callbackURL: 'http://localhost:3000/login/facebook/return'
-//   },
-//   function(accessToken, refreshToken, profile, cb) {
-//     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-//       return cb(err, user);
-//     });
-//   }
-// ));
 
 
 router.use(function (req, res, next) {
@@ -33,18 +19,33 @@ router.use(function (req, res, next) {
     }
     next();
 })
-router.get('/login/facebook', passport.authenticate('facebook',{scope: ['email', 'public_profile']}));
+router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 
 router.get('/login/facebook/return',
-passport.authenticate('facebook', { failureRedirect: '/login' , session: false}),
-  function(req, res) {
-    res.redirect('/');
-})
+    passport.authenticate('facebook', { failureRedirect: '/login', session: true }),
+    function (req, res) {
+        if (res.locals.currentUser != null) {
+            // console.log(res.locals.currentUser)
+            res.redirect('/');
+        } else {
+            res.redirect("/test")
+        }
+    })
 
+router.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
+router.get('/login/google/return', passport.authenticate('google', { failureRedirect: '/login', session: true }),
+    function (req, res) {
+        if (res.locals.currentUser != null) {
+            // console.log(res.locals.currentUser)
+            res.redirect('/');
+        } else {
+            res.redirect("/test")
+        }
+    })
 
 //Socket test
-router.get("/socket", function(req, res){
+router.get("/socket", function (req, res) {
     res.render("socket")
 })
 
@@ -62,6 +63,7 @@ router.get("/register", function (req, res) {
 router.post("/register", function (req, res) {
     var newUser = new User({ username: req.body.username });
     User.register(newUser, req.body.password, function (err, user) {
+        console.log(newUser)
         if (err) {
             console.log(err);
             return res.render("register");
@@ -74,6 +76,7 @@ router.post("/register", function (req, res) {
 
 //Login 
 router.get("/login", function (req, res) {
+    console.log(req.isAuthenticated())
     res.render("login");
 })
 
@@ -89,4 +92,21 @@ router.get("/logout", function (req, res) {
     res.redirect("/");
 })
 
+router.get("/test", function (req, res) {
+    res.render("profiletest")
+})
+
+//Add username of user logged in with facebook ID
+//username = received from input
+//res.locals.currentUser.facebook.id is current facebook ID
+router.put("/test", function (req, res) {    
+    User.findOneAndUpdate({ 'facebook.id': res.locals.currentUser.facebook.id }, { 'username':req.body.username }).exec(function (err, founduser) {
+    //    console.log("user"+founduser)
+        if (err) {
+            console.log(err)
+        } else {
+            res.redirect("back")
+        }
+    })
+})
 module.exports = router;

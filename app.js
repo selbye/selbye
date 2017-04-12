@@ -6,6 +6,7 @@ var mongoose = require("mongoose"),
     passport = require("passport"),
     localStrategy = require("passport-local"),
     FacebookStrategy = require("passport-facebook"),
+    GoogleStrategy   = require("passport-google-oauth").OAuth2Strategy,
     User = require("./models/user"),
     Book = require("./models/book"),
     fs = require("file-system"),
@@ -48,61 +49,82 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()));
 
-
 passport.use(new FacebookStrategy({
     clientID: 1437501352988595,
     clientSecret: "c6561bc448934e420783c46363d84e52",
     callbackURL: 'http://localhost:3000/login/facebook/return',
     profileFields: ['id', 'displayName', 'name', 'email']
-  },
-  function(accessToken, refreshToken, profile, cb) {
-       process.nextTick(function() {
-           console.log(profile)
-      User.findOne({ 'facebook.id': profile.id }, function(err, user) {
-        if (err)
-          return cb(err);
-        if (user) {
-          return cb(null, user);
-
-        //   passport.serializeUser();
-    } else {
-          var newUser = new User();
-          newUser.facebook.id = profile.id;
-          newUser.facebook.token = accessToken;
-          newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
-          newUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
-          newUser.save(function(err) {
-            if (err)
-              throw err;
-            return cb(null, newUser);
-          });
-        }
-      });
-    });
-    // User.findOrCreate({ 
-    //     'facebook.id': profile.id,
-    //     'facebook.token': accessToken,
-    //     // email: profile.emails[0].value
-    //  }, function (err, user) {
-    //      if(err){
-    //          console.log(err)
-    //      }else{
-    //      console.log(user);
-    //   return cb(err, user);
-    //      }
-    // });
-    // console.log(db);
-    // console.log(profile)
-  }
+},
+    function (accessToken, refreshToken, profile, cb) {
+        process.nextTick(function () {
+            User.findOne({ 'facebook.id': profile.id }, function (err, user) {
+                if (err)
+                    return cb(err);
+                if (user) {
+                    return cb(null, user);
+                } else {
+                    var newUser = new User();
+                    newUser.facebook.id = profile.id;
+                    newUser.facebook.token = accessToken;
+                    newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+                    newUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
+                    newUser.save(function (err) {
+                        if (err)
+                            throw err;
+                        return cb(null, newUser);
+                    });
+                }
+            });
+        });
+    }
 ));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+
+//GOOGLE Login
+passport.use(new GoogleStrategy({  
+    clientID: "1087348076225-7kenj6h5ldjimo8b4k95ca0ipg0ipunm.apps.googleusercontent.com",
+    clientSecret: "NvDYY06Fu9lj_YCd7ccsVMBn",
+    callbackURL: 'http://localhost:3000/login/google/return',
+  },
+    function(token, refreshToken, profile, done) {
+      process.nextTick(function() {
+        User.findOne({ 'google.id': profile.id }, function(err, user) {
+          if (err)
+            return done(err);
+          if (user) {
+            return done(null, user);
+          } else {
+            var newUser = new User();
+            newUser.google.id = profile.id;
+            newUser.google.token = token;
+            newUser.google.name = profile.displayName;
+            newUser.google.email = profile.emails[0].value;
+            newUser.save(function(err) {
+              if (err)
+                throw err;
+              return done(null, newUser);
+            });
+          }
+        });
+      });
+    }));
+
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+});
+
 app.use(indexRoutes);
 app.use(userRoutes);
 app.use(bookRoutes);
 
 app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
+    // console.log(res.locals)
     currUsr = res.locals.currentUser;
     //if logged in then this: else currentUser isequals undefined
     if (currUsr != undefined) {
@@ -115,7 +137,7 @@ app.use(function (req, res, next) {
 })
 
 //Messages 
-app.get("/message/:id", function(req, res){
+app.get("/message/:id", function (req, res) {
     res.send("worksls")
 })
 
