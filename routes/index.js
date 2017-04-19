@@ -24,8 +24,9 @@ router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email
 router.get('/login/facebook/return',
     passport.authenticate('facebook', { failureRedirect: '/login', session: true }),
     function (req, res) {
+        console.log(res.user)
         if (res.locals.currentUser != null) {
-            // console.log(res.locals.currentUser)
+            console.log(res.locals)
             res.redirect('/');
         } else {
             res.redirect("/test")
