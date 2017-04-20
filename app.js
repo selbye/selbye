@@ -6,7 +6,7 @@ var mongoose = require("mongoose"),
     passport = require("passport"),
     localStrategy = require("passport-local"),
     FacebookStrategy = require("passport-facebook"),
-    GoogleStrategy   = require("passport-google-oauth").OAuth2Strategy,
+    GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     User = require("./models/user"),
     Book = require("./models/book"),
     fs = require("file-system"),
@@ -80,32 +80,32 @@ passport.use(new FacebookStrategy({
 ));
 
 //GOOGLE Login
-passport.use(new GoogleStrategy({  
+passport.use(new GoogleStrategy({
     clientID: "1087348076225-7kenj6h5ldjimo8b4k95ca0ipg0ipunm.apps.googleusercontent.com",
     clientSecret: "NvDYY06Fu9lj_YCd7ccsVMBn",
     callbackURL: 'http://localhost:3000/login/google/return',
-  },
-    function(token, refreshToken, profile, done) {
-      process.nextTick(function() {
-        User.findOne({ 'google.id': profile.id }, function(err, user) {
-          if (err)
-            return done(err);
-          if (user) {
-            return done(null, user);
-          } else {
-            var newUser = new User();
-            newUser.google.id = profile.id;
-            newUser.google.token = token;
-            newUser.google.name = profile.displayName;
-            newUser.google.email = profile.emails[0].value;
-            newUser.save(function(err) {
-              if (err)
-                throw err;
-              return done(null, newUser);
+},
+    function (token, refreshToken, profile, done) {
+        process.nextTick(function () {
+            User.findOne({ 'google.id': profile.id }, function (err, user) {
+                if (err)
+                    return done(err);
+                if (user) {
+                    return done(null, user);
+                } else {
+                    var newUser = new User();
+                    newUser.google.id = profile.id;
+                    newUser.google.token = token;
+                    newUser.google.name = profile.displayName;
+                    newUser.google.email = profile.emails[0].value;
+                    newUser.save(function (err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
             });
-          }
         });
-      });
     }));
 
 // passport.serializeUser(User.serializeUser());
@@ -135,7 +135,6 @@ app.use(function (req, res, next) {
     }
     next();
 })
-
 //Messages 
 app.get("/message/:id", function (req, res) {
     res.send("worksls")

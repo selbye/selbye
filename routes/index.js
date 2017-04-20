@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var passport = require("passport"),
+    geoLocator = require("geolocator"),
     FacebookStrategy = require("passport-facebook"),
-    GoogleStrategy   = require("passport-google-oauth");
+    GoogleStrategy = require("passport-google-oauth");
 var User = require("../models/user"),
     Book = require("../models/book");
 
@@ -19,14 +20,18 @@ router.use(function (req, res, next) {
     }
     next();
 })
+
+function checkIfRegistered() {
+
+}
 router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 
 router.get('/login/facebook/return',
     passport.authenticate('facebook', { failureRedirect: '/login', session: true }),
     function (req, res) {
-        console.log(res.user)
-        if (res.locals.currentUser != null) {
-            console.log(res.locals)
+        console.log(req.user.username)
+        if (req.user.username != null) {
+            // console.log(res.locals)
             res.redirect('/');
         } else {
             res.redirect("/test")
@@ -37,7 +42,9 @@ router.get('/login/google', passport.authenticate('google', { scope: ['profile',
 
 router.get('/login/google/return', passport.authenticate('google', { failureRedirect: '/login', session: true }),
     function (req, res) {
-        if (res.locals.currentUser != null) {
+        console.log(req.user.google.email);
+
+        if (req.user.username != null) {
             // console.log(res.locals.currentUser)
             res.redirect('/');
         } else {
@@ -100,14 +107,24 @@ router.get("/test", function (req, res) {
 //Add username of user logged in with facebook ID
 //username = received from input
 //res.locals.currentUser.facebook.id is current facebook ID
-router.put("/test", function (req, res) {    
-    User.findOneAndUpdate({ 'facebook.id': res.locals.currentUser.facebook.id }, { 'username':req.body.username }).exec(function (err, founduser) {
-    //    console.log("user"+founduser)
-        if (err) {
-            console.log(err)
-        } else {
-            res.redirect("back")
-        }
-    })
+router.put("/test", function (req, res) {
+    if (req.user.facebook == null) {
+        User.findOneAndUpdate({ 'google.id': res.locals.currentUser.google.id }, { 'username': req.body.username }).exec(function (err, founduser) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.redirect("back")
+            }
+        })
+    } else if (req.user.google == null) {
+        User.findOneAndUpdate({ 'facebook.id': res.locals.currentUser.facebook.id }, { 'username': req.body.username }).exec(function (err, founduser) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.redirect("back")
+            }
+        })
+    }
+
 })
 module.exports = router;

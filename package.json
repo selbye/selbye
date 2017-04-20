@@ -19,6 +19,7 @@
     "express": "^4.15.2",
     "express-session": "^1.15.1",
     "file-system": "^2.2.2",
+    "geolocator": "^2.1.1",
     "mongoose": "^4.9.1",
     "multer": "^1.3.0",
     "passport": "^0.3.2",
