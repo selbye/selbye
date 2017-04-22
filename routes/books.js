@@ -5,7 +5,9 @@ var fs = require("file-system"),
 var User = require("../models/user"),
     Book = require("../models/book");
 
+var location,address
 router.use(function (req, res, next) {
+    // res.locals.location = location
     res.locals.currentUser = req.user;
     currUsr = res.locals.currentUser;
     //if logged in then this: else currentUser isequals undefined
@@ -104,6 +106,7 @@ router.get("/books/:id", function (req, res) {
 //Show page
 //List of all books AKA home page
 router.get("/books", function (req, res) {
+    // console.log(req.query)
     Book.find({}, function (err, allBooks) {
         if (err) {
             console.log(err)
@@ -111,6 +114,14 @@ router.get("/books", function (req, res) {
             res.render("books/index", { books: allBooks });
         }
     })
+})
+router.post("/location", function(req, res){
+    console.log("POSTED")
+    console.log(req.body)
+    // location = req.body.city
+    // address = req.body.address
+    // res.send("OKs")
+    // res.send()
 })
 
 module.exports = router;

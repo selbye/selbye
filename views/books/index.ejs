@@ -1,13 +1,107 @@
 <% include ../partials/header %>
-Books list
-<br>
-<% books.forEach(function(book) { %>
-<a href="/books/<%= book._id %>">   <%= book.name %> </a>
-   <br />
-   <img src= "<%= book.image %>" height="500" width="500" >
-   <br />
-   <%= book.price %>
-   <br />
-<% }) %>
 
-<% include ../partials/footer %>
+    <!--<!DOCTYPE html>-->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="dist/geolocator.min.js"></script>
+    <script type="text/javascript">
+        // $(document).ready(function(){
+        //     console.log("READY")
+
+        // })
+        // $(document).ready(function () {
+        //     $('#area').on('submit', function (event) {
+                
+        //         console.log("WORKS")
+        //         event.preventDefault();
+        //         // document.forms['area'].submit()
+
+        //         var data = {
+        //             // city: $('#city').val()
+        //             city: location.address.city
+        //             // address: $('#address').val(lcoation.address)
+        //         };
+        //         $.ajax({
+        //             url: '/location',
+        //             data: data,
+        //             method: 'POST'
+        //         }).then(function (response) {
+        //             console.log("SENT")
+        //             console.log(response)
+        //         })
+        //     })
+
+        //     console.log("ready")
+
+        // })
+var cityName
+var timer, delay = 8000; //5 minutes counted in milliseconds.
+
+// timer = setInterval(function(){
+$(document).ready(function(){
+
+         $.ajax({                    
+  url: '/location',     
+  type: 'post', // performing a POST request
+  data : {
+    data1 : "HELLO"+cityName // will be accessible in $_POST['data1']
+  },
+  dataType: 'json',                   
+  success: function(data)         
+  {
+    // etc...
+  } 
+});
+
+},delay)
+        geolocator.config({
+            language: "en",
+            google: {
+                version: "3",
+                key: "AIzaSyDAa6gPwQ_qGEiEjMOddgGyY3bDDTsGSnE"
+
+            }
+        });
+
+
+        // window.onload = function () {
+        //     var options = {
+        //         // enableHighAccuracy: true,
+        //         timeout: 5000,
+        //         maximumWait: 10000,     // max wait time for desired accuracy
+        //         maximumAge: 0,          // disable cache
+        //         desiredAccuracy: 30,    // meters
+        //         fallbackToIP: true,     // fallback to IP if Geolocation fails or rejected
+        //         addressLookup: true,    // requires Google API key if true
+        //         timezone: true,         // requires Google API key if true
+        //         // map: "map-canvas",      // interactive map element id (or options object)
+        //         // staticMap: true         // map image URL (boolean or options object)
+        //     };
+        //     geolocator.locate(options, function (err, location) {
+        //         // var city = document.getElementById('city');
+        //         console.log(location.address.city);
+        //        cityName = location.address.city
+        //         if (err) return console.log(err);
+        //     });
+        // }
+    </script>
+    <form action="/location" method="POST" id="area">
+        <input type="hidden" name="city" value="helo" id="city">
+        <!--<input type="hidden" name="address" id="city">-->
+        <input type="submit" value="submit">
+    </form>
+
+    Books list
+    <br>
+    <% books.forEach(function(book) { %>
+        <a href="/books/<%= book._id %>">
+            <%= book.name %>
+        </a>
+        <br />
+        <img src="<%= book.image %>" height="500" width="500">
+        <br />
+        <%= book.price %>
+            <br />
+            <% }) %>
+
+                <% include ../partials/footer %>

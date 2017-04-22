@@ -121,7 +121,6 @@ passport.deserializeUser(function (user, done) {
 app.use(indexRoutes);
 app.use(userRoutes);
 app.use(bookRoutes);
-
 app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     // console.log(res.locals)
@@ -134,6 +133,12 @@ app.use(function (req, res, next) {
         // temp_user2    = window.temp_user;
     }
     next();
+})
+app.get("/geo", function(req, res){
+    res.render("geo")
+})
+app.post("/geo", function(req, res){
+    console.log(req.body)
 })
 
 //Messages 
