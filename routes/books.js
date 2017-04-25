@@ -125,9 +125,6 @@ router.post("/location", function(req, res){
     city = req.body.city
     address = req.body.address
     console.log(req.body)
-    // req.session.cookie.location = city
-    // res.send("OKs")
-    // res.send()
 })
 
 module.exports = router;

@@ -33,27 +33,16 @@
                         }).done(function (msg) {
                             $("#new").html(msg);
                         })
-                        $("#city").html(city)
-                        $("#add").html(address)
 
 
                     });
-
-                    $("#data").html("latitude: " + position.coords.latitude +
-                        "<br>longitude: " + position.coords.longitude);
 
                 });
             } else {
                 console.log("NOT SELECT")
             }
-            console.log("here")
         </script>
-        <div id="data">
-            <h4>You are here:</h4>
-        </div>
-     <h2 id="city"> address </h2>
-        <h2 id="add"> address </h2>
-
+        
         Books list
         <h1 id="new"> a </h1>
         <br>
