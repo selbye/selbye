@@ -5,7 +5,7 @@ var fs = require("file-system"),
 var User = require("../models/user"),
     Book = require("../models/book");
 
-var location,address
+var city,address
 router.use(function (req, res, next) {
     // res.locals.location = location
     res.locals.currentUser = req.user;
@@ -45,6 +45,7 @@ var upload = multer({ storage: storage });
 
 //Add new book
 router.get("/books/new", function (req, res) {
+    console.log(location)
     res.render("books/new.ejs")
 })
 // //Check if file already exists
@@ -106,6 +107,7 @@ router.get("/books/:id", function (req, res) {
 //Show page
 //List of all books AKA home page
 router.get("/books", function (req, res) {
+    console.log(city)
     // console.log(req.query)
     Book.find({}, function (err, allBooks) {
         if (err) {
@@ -114,12 +116,16 @@ router.get("/books", function (req, res) {
             res.render("books/index", { books: allBooks });
         }
     })
+    
 })
+
+
 router.post("/location", function(req, res){
-    console.log("POSTED")
+    //store city in location var
+    city = req.body.city
+    address = req.body.address
     console.log(req.body)
-    // location = req.body.city
-    // address = req.body.address
+    // req.session.cookie.location = city
     // res.send("OKs")
     // res.send()
 })

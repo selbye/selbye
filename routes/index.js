@@ -86,6 +86,7 @@ router.post("/register", function (req, res) {
 router.get("/login", function (req, res) {
     console.log(req.isAuthenticated())
     res.render("login");
+    console.log(req.session.location)
 })
 
 router.post("/login", passport.authenticate("local",
