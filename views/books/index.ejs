@@ -14,7 +14,6 @@
                     api = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
                         position.coords.latitude + "," + position.coords.longitude +
                         "&key=AIzaSyDAa6gPwQ_qGEiEjMOddgGyY3bDDTsGSnE"
-                    console.log(api)
                     console.log(position)
                     $.getJSON(api, function (data) {
                         var length = data.results.length
@@ -30,6 +29,10 @@
                                 city: data.results[length - 3].address_components[0].long_name,
                                 address: data.results[0].formatted_address
                             },
+                            success: function (response) {
+                                console.log("res" + response)
+                                $("#new").html("msg");
+                            }
                         }).done(function (msg) {
                             $("#new").html(msg);
                         })
@@ -42,7 +45,7 @@
                 console.log("NOT SELECT")
             }
         </script>
-        
+
         Books list
         <h1 id="new"> a </h1>
         <br>

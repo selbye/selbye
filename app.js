@@ -134,6 +134,33 @@ app.use(function (req, res, next) {
     }
     next();
 })
+
+//sendgrid email send
+// var helper = require('sendgrid').mail;
+// var fromEmail = new helper.Email('yo@selbye.com');
+// var toEmail = new helper.Email('tilvashiv1103@gmail.com');
+// var subject = 'Guess who the sender IS??';
+// var content = new helper.Content('text/plain', 'Hello, Email!');
+// var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+
+// var sg = require('sendgrid')("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");
+// var request = sg.emptyRequest({
+//   method: 'POST',
+//   path: '/v3/mail/send',
+//   body: mail.toJSON()
+// });
+
+// sg.API(request, function (error, response) {
+//   if (error) {
+//     console.log('Error response received');
+//   }
+//   console.log(response.statusCode);
+//   console.log(response.body);
+//   console.log(response.headers);
+// });
+
+
+
 app.get("/geo", function(req, res){
     res.render("geo")
 })
