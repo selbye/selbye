@@ -9,6 +9,9 @@
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
         <meta charset="utf-8">
         <script>
+            // Put this code in seperate file and
+            // If city(currentCity) is defined then 
+            // include this file using include header code in ejs
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     api = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
@@ -19,9 +22,9 @@
                         var length = data.results.length
                         city = data.results[length - 3].address_components[0].long_name
                         address = data.results[0].formatted_address
-                        console.log(data.results[0])
-                        console.log(data.results[length - 3].address_components[0].long_name)
-                        console.log(data.results[0].formatted_address)
+                        // console.log(data.results[0])
+                        // console.log(data.results[length - 3].address_components[0].long_name)
+                        // console.log(data.results[0].formatted_address)
                         $.ajax({
                             url: '/location',
                             type: 'post', // performing a POST request

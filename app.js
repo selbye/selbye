@@ -121,19 +121,20 @@ passport.deserializeUser(function (user, done) {
 app.use(indexRoutes);
 app.use(userRoutes);
 app.use(bookRoutes);
-app.use(function (req, res, next) {
-    res.locals.currentUser = req.user;
-    // console.log(res.locals)
-    currUsr = res.locals.currentUser;
-    //if logged in then this: else currentUser isequals undefined
-    if (currUsr != undefined) {
-        //store currentUser in temp_user
-        temp_user = currUsr.username;
-        // temp_user = currUsr.username;
-        // temp_user2    = window.temp_user;
-    }
-    next();
-})
+
+// app.use(function (req, res, next) {
+//     res.locals.currentUser = req.user;
+//     // console.log(res.locals)
+//     currUsr = res.locals.currentUser;
+//     //if logged in then this: else currentUser isequals undefined
+//     if (currUsr != undefined) {
+//         //store currentUser in temp_user
+//         temp_user = currUsr.username;
+//         // temp_user = currUsr.username;
+//         // temp_user2    = window.temp_user;
+//     }
+//     next();
+// })
 
 //sendgrid email send
 // var helper = require('sendgrid').mail;
@@ -172,6 +173,8 @@ app.post("/geo", function(req, res){
 app.get("/message/:id", function (req, res) {
     res.send("worksls")
 })
+
+
 
 app.get("*", function (req, res) {
     res.send("Error 404");

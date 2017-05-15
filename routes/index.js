@@ -7,8 +7,10 @@ var passport = require("passport"),
 var User = require("../models/user"),
     Book = require("../models/book");
 
+var city, address
 
 router.use(function (req, res, next) {
+    res.locals.currentCity = city
     res.locals.currentUser = req.user;
     currUsr = res.locals.currentUser;
     //if logged in then this: else currentUser isequals undefined
@@ -84,9 +86,8 @@ router.post("/register", function (req, res) {
 
 //Login 
 router.get("/login", function (req, res) {
-    console.log(req.isAuthenticated())
+    // console.log(req.isAuthenticated())
     res.render("login");
-    console.log(req.session.location)
 })
 
 router.post("/login", passport.authenticate("local",
@@ -128,4 +129,11 @@ router.put("/test", function (req, res) {
     }
 
 })
+router.post("/location", function (req, res) {
+    //store city in location var
+    city = req.body.city
+    address = req.body.address
+    console.log(req.body)
+})
+
 module.exports = router;
