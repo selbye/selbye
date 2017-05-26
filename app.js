@@ -9,6 +9,7 @@ var mongoose = require("mongoose"),
     GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     User = require("./models/user"),
     Book = require("./models/book"),
+    Category = require("./models/categories")
     fs = require("file-system"),
     // multer = require('multer'),
     // upload = multer({ dest: './uploads' }),
@@ -121,6 +122,36 @@ passport.deserializeUser(function (user, done) {
 app.use(indexRoutes);
 app.use(userRoutes);
 app.use(bookRoutes);
+
+
+
+// Category.create({_id:"books",path: null})
+// Category.create({_id:"GTU books",path: ",books,"})
+// Category.create({_id:"Novels",path: ",books,"})
+// Category.create({_id:"Action",path: ",books,Novels,"})
+// Category.create({_id:"Drama",path: ",books,Novels,"})
+// Category.create({_id:"10-12th",path: ",books,"})
+// Category.create({_id:"10th",path: ",books,10-12th,"})
+// Category.create({_id:"11th",path: ",books,10-12th,"})
+// Category.create({_id:"12th",path: ",books,10-12th,"})
+// Category.create({_id:"1-9th",path: ",books,"})
+// Category.create({_id:"3rd",path: ",books,1-9th,"})
+// Category.create({_id:"4th",path: ",books,1-9th,"})
+// Category.create({_id:"Computer Science",path: ",books,GTU books,"})
+// Category.create({_id:"AAD",path: ",books,GTU books,Computer Science,"})
+// Category.create({_id:"Mechanical Engineering",path: ",books,GTU books,"})
+// Category.create({_id:"Civil Engineering",path: ",books,GTU books,"})
+
+
+
+
+
+
+
+
+
+
+
 
 // app.use(function (req, res, next) {
 //     res.locals.currentUser = req.user;

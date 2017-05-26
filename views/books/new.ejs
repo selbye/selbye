@@ -1,15 +1,76 @@
 <% include ../partials/header %>
-new working
-<h1> Add new book </h1>
-<form action="/books"  enctype="multipart/form-data" method="POST">
-    <input type="text" name="name" placeholder="Book name" accept="image">
-    <input type="number" name="price" placeholder="price">
-    <input type="file" name="photo">
-    <br />
-    <br />
-    <br />
-    <textarea name="desc" cols="50" rows="10">
+    new working
+    <h1> Add new book </h1>
+    <script>
+        var num
+        function changeSelect(selectNo) {
+            var sels = document.getElementById("subcats").getElementsByTagName('SELECT');
+            for (var j = 0; j < sels.length; j++) {
+                sels[j].style.display = "none";
+                if (j === (selectNo - 1))
+                { sels[j].style.display = ''; }
+            }
+            var val = document.getElementById('selectVal')
+            var currentCategory = val.options[val.selectedIndex].text;
+            num = val.options[val.selectedIndex].value 
+            document.getElementById('category').value = currentCategory
+        }
+        function subCatFunc(subcatValue) {
+            var val = document.getElementById('subCat' + num)
+            var subCategory = val.options[val.selectedIndex].text;
+            document.getElementById('subCategory').value = subCategory
+        }
+    </script>
+    <form action="/books" enctype="multipart/form-data" method="POST">
+        <input type="text" name="name" placeholder="Book name" accept="image">
+        <input type="number" name="price" placeholder="price">
+        <input type="file" name="photo">
+        <br />
+        <br />
+        <br />
+        <textarea name="desc" cols="50" rows="10">
     </textarea>
-    <input type="submit" value="upload">
-</form>
-<% include ../partials/footer %>
+        <br>
+        <input type="hidden" value="" name="category" id="category" />
+        <input type="hidden" value="" name="subCategory" id="subCategory" />
+
+        <select id="selectVal" onchange="changeSelect( this.value )"> 
+    <option value="0">Select category </option> 
+    <% var c = 1 %>
+    <% var arr = [] %>
+
+    <% categories.forEach(function(cat){ %>
+    <% var i = cat.path %>
+    <% if(i){ %>
+    <%      if(i.endsWith(",books,")){ %>
+    <% arr[arr.length] = cat._id %>
+                <option value="<%= c %>"><%= cat._id %> </option> 
+
+                <% c+= 1 %>
+                <% } %>
+    <% } %> 
+    <% }) %>
+        </select>
+
+        <div id="subcats">
+            <% for(var z =0; z<arr.length;z++){ %>
+                <% var curr_id = ("subCat" + (z+1)) %>
+                <select id = "<%= curr_id %>" onchange="subCatFunc(this.value)" style="display:none"> 
+<% var counter = 0 %>
+    <option value="0">Select Sub-Category</option> 
+    <% categories.forEach(function(cat){ %>
+    <% var path = cat.path %>
+    <% if(path){ %>
+    <%      if(path.endsWith("," + arr[z] + ",")){ %>
+    <option value=" <%= counter %> "><%= cat._id %></option> 
+    <% counter+=1 %>
+    <%= cat._id %>
+    <% } %>
+        <% } %>
+                <% }) %>
+</select>
+                <% } %>
+                    <input type="submit" value="upload">
+    </form>
+
+    <% include ../partials/footer %>

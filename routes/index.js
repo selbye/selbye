@@ -31,7 +31,6 @@ router.get('/login/facebook', passport.authenticate('facebook', { scope: ['email
 router.get('/login/facebook/return',
     passport.authenticate('facebook', { failureRedirect: '/login', session: true }),
     function (req, res) {
-        console.log(req.user.username)
         if (req.user.username != null) {
             // console.log(res.locals)
             res.redirect('/');
@@ -44,8 +43,6 @@ router.get('/login/google', passport.authenticate('google', { scope: ['profile',
 
 router.get('/login/google/return', passport.authenticate('google', { failureRedirect: '/login', session: true }),
     function (req, res) {
-        console.log(req.user.google.email);
-
         if (req.user.username != null) {
             // console.log(res.locals.currentUser)
             res.redirect('/');
@@ -73,7 +70,6 @@ router.get("/register", function (req, res) {
 router.post("/register", function (req, res) {
     var newUser = new User({ username: req.body.username });
     User.register(newUser, req.body.password, function (err, user) {
-        console.log(newUser)
         if (err) {
             console.log(err);
             return res.render("register");
@@ -133,7 +129,6 @@ router.post("/location", function (req, res) {
     //store city in location var
     city = req.body.city
     address = req.body.address
-    console.log(req.body)
 })
 
 module.exports = router;

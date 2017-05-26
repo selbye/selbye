@@ -3,9 +3,9 @@ var router = express.Router();
 var fs = require("file-system"),
     multer = require('multer')
 var User = require("../models/user"),
-    Book = require("../models/book");
+    Category = require("../models/categories")
+Book = require("../models/book");
 
-var hello = "hello"
 router.use(function (req, res, next) {
     // console.log(city);
     // // res.locals.location = location
@@ -46,7 +46,15 @@ var upload = multer({ storage: storage });
 
 //Add new book
 router.get("/books/new", function (req, res) {
-    res.render("books/new.ejs")
+    Category.find({}, function (err, allCats) {
+        if (err) {
+            console.log(err)
+        } else {
+            res.render("books/new.ejs", {categories: allCats });
+        }
+
+    })
+
 })
 // //Check if file already exists
 // fs.readdir('images/', (err, files) => {
@@ -66,9 +74,13 @@ router.post("/books", upload.single('photo'), function (req, res, next) {
         id: req.user._id,
         username: req.user.username
     }
+    category = [
+        req.body.category,
+        req.body.subCategory
+    ]
     //image path from /images/username/filename directory
     var image = ("/" + temp_user + "/" + file_name);
-    var newBook = { name: name, price: price, desc: desc, image: image, owner: owner }
+    var newBook = { name: name, price: price, desc: desc, image: image, owner: owner,category: category}
     Book.create(newBook, function (err, newlyCreated) {
         if (err) {
             console.log(err)
@@ -107,15 +119,49 @@ router.get("/books/:id", function (req, res) {
 //Show page
 //List of all books AKA home page
 router.get("/books", function (req, res) {
-    // console.log(req.query)
-    Book.find({}, function (err, allBooks) {
-        if (err) {
-            console.log(err)
-        } else {
-            res.render("books/index", { books: allBooks });
-        }
-    })
+    cat = req.query.cat
+    if (cat) {
+        Book.find({ category: cat }, function (err, allBooks) {
+            if (err) {
+                console.log(err)
+            } else {
+                //{path:/,GTU books,/}
+                reg = "," + cat
+                Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        res.render("books/index", { books: allBooks, categories: allCats });
+                    }
 
+                })
+            }
+        })
+    } else {
+        Book.find({}, function (err, allBooks) {
+            if (err) {
+                console.log(err)
+            } else {
+                Category.find({}, function (err, allCats) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        res.render("books/index", { books: allBooks, categories: allCats });
+                    }
+
+                })
+            }
+        })
+    }
+
+    //CAtegories
+    // Book.find({category:"asd"},function (err, found) {
+    //     if (err) {
+    //         console.log(err)
+    //     } else {
+    //         console.log(found);
+    //     }
+    // })
 })
 
 

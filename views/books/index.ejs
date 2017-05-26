@@ -50,7 +50,7 @@
         </script>
 
         Books list
-        <h1 id="new"> a </h1>
+        <h1 id="new">  </h1>
         <br>
         <% books.forEach(function(book) { %>
             <a href="/books/<%= book._id %>">
@@ -62,5 +62,12 @@
             <%= book.price %>
                 <br />
                 <% }) %>
+
+    <br>
+    <% categories.forEach(function(category){ %>
+    <%= category._id %>
+    <a href="/books/?cat=<%= category._id %>" %> >Link</a>
+    <br>
+    <% }) %>
 
                     <% include ../partials/footer %>
