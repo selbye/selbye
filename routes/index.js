@@ -10,6 +10,7 @@ var User = require("../models/user"),
 var city, address
 
 router.use(function (req, res, next) {
+    console.log(city)
     res.locals.currentCity = city
     res.locals.currentUser = req.user;
     currUsr = res.locals.currentUser;
@@ -127,6 +128,7 @@ router.put("/test", function (req, res) {
 })
 router.post("/location", function (req, res) {
     //store city in location var
+    console.log(req.body)
     city = req.body.city
     address = req.body.address
 })

@@ -142,7 +142,8 @@ router.get("/books", function (req, res) {
             if (err) {
                 console.log(err)
             } else {
-                Category.find({}, function (err, allCats) {
+                reg = ",books"
+                Category.find({ "path": { $regex: ".*" + reg + ".$" }}, function (err, allCats) {
                     if (err) {
                         console.log(err)
                     } else {
