@@ -3,6 +3,7 @@ var app = express();
 var mongoose = require("mongoose"),
     bodyParser = require("body-parser"),
     methodOverride = require("method-override"),
+    cookieParser = require('cookie-parser'),
     passport = require("passport"),
     localStrategy = require("passport-local"),
     FacebookStrategy = require("passport-facebook"),
@@ -38,6 +39,7 @@ app.use(express.static(__dirname + "/images"))
 
 app.use(methodOverride("_method"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 //passport configuration
 app.use(require("express-session")({
