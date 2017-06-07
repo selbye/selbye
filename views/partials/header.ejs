@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Material Design Bootstrap</title>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
@@ -32,7 +33,7 @@
 
 <body>
     <!--Navbar-->
-    <nav class="navbar navbar-toggleable-md navbar-dark bg-primary">
+    <nav class="navbar navbar-toggleable-md fixed-top navbar-dark bg-primary">
         <div class="container">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +49,7 @@
                     </li>-->
                     <li>
                         <form class="form-inline waves-effect waves-light form-control-inline">
-                            <input class="form-control" style="width:300%" type="text" placeholder="Search book name">
+                            <input class="form-control" style="width:200%" type="text" placeholder="Search book name">
                         </form>
 
                     </li>
@@ -60,14 +61,21 @@
                         </li>
                         <% } else{ %>
                             <li class="nav-item">
-                                <a class="nav-link" href="/user/<%= currentUser.username %>">Signed in as <%= currentUser.username %> </a>
+                                <a class="nav-link" href="/books/new">
+                                Add new Book
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/user/<%= currentUser.username %>">
+                                    <%= currentUser.username %> 
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">Log out </a>
                             </li>
                             <% } %>
                                 <li class="nav-item">
-                                            <a id= "citySelect" class="nav-link" data-toggle="modal" data-target="#basicExample">Select your city</a>
+                                    <a id="citySelect" class="nav-link" data-toggle="modal" data-target="#basicExample">Select your city</a>
                                 </li>
                 </ul>
             </div>
@@ -344,6 +352,6 @@
             if (getCookie("city")) {
                 document.getElementById("citySelect").innerHTML = getCookie("city")
             } else {
-                
+
             }
         </script>

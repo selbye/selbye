@@ -1,21 +1,71 @@
 <% include ../partials/header %>
+    <br><br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4 col-xs-12 col-sm-12">
+                <!--Card-->
+                <div class="card showCard">
+                    <img class="img-responsive" src="<%= books.image %>">
+                </div>
+                <!--/.Card-->
+            </div>
+            <!--<div class="col-md-1">
 
-Book name: <%= books.name %>
-<br />
-<!--Book owners name-->
-owner: 
-<%= books.owner.username %>
+            </div>-->
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h2 class="text-left">
+                            <%= books.name %>
+                        </h2>
+                        <h5>Author </h5>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="text-right">
+                            <form id="delete-form" action="/books/<%= books._id %>?_method=DELETE" method="POST">
+                                <input class="btn btn-danger" type="submit" value="Remove book">
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-profile:
-<a href="/user/<%= books.owner.username %>"> profile </a>
-<br />
-<br />
-<img src = "<%= books.image %>">  
 
-<br>
-Delete:
-<form id="delete-form" action="/books/<%= books._id %>?_method=DELETE" method="POST">
-<input type="submit" value="Delete">
-</form>
+                <hr>
+                <h2> <i class="fa fa-inr"></i>
+                    <%= books.price %>
+                </h2>
+                <div class="row">
+                    <div class="col-md-7">
+                        <h3>Book Information</h3>
+                        <ul>
+                            <li>Language: English </li>
+                            <li>ISBN number: 45464153345</li>
+                            <li> Pages: 180 </li>
+                            <li>Publisher: Techmax </li>
+                            <li> Author: </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card sellerCard">
+                            <h4 class="text-center" style="padding-top:20px"> Seller Information:</h4>
+                            <p class="text-center"> <i class="fa fa-user" aria-hidden="true"></i>
+                                <%= books.owner.username %>
+                            </p>
+                            <p class="left-space"> Contact: 12344558555 <br> Area: <br> Address: </p>
+                            <div class="text-center"><a href="/user/<%= books.owner.username %>">Browse other books by
+                                <%= books.owner.username %> </a>
+                            </div>
+                            <butto class="btn btn-cyan"> <i class="fa fa-envelope-o" aria-hidden="true"></i> &nbsp; Message Seller </butto>
 
-<% include ../partials/footer %>
+                        </div>
+                    </div>
+                </div>
+
+                <h3> More information: </h3>
+                <p> KALSkd this sdf aisdfa oksds fa4 aosdf </p>
+            </div>
+        </div>
+    </div>
+
+
+        <% include ../partials/footer %>
