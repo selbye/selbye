@@ -37,7 +37,7 @@ var findBook = function findBook(req, res){
 router.get("/user/:id", findBook);
 
 
-router.get("/user/:id/profile", function(req, res){
+router.get("/user/:id/profile",checkProfileOwnership, function(req, res){
     res.render("users/profile");
 })
 
@@ -57,6 +57,18 @@ function isLoggedIn(req, res, next) {
         return next();
     }
     res.redirect("/login");
+}
+
+function checkProfileOwnership(req,res, next){
+    if(req.isAuthenticated()){
+        if(req.params.id == req.user.username){
+            next();
+        }else{
+            console.log("please login")
+        }
+    }else{
+        res.redirect("back")
+    }
 }
 
 module.exports = router;

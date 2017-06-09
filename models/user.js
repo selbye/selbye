@@ -18,7 +18,7 @@ var UserSchema = new mongoose.Schema({
         email: String,
         name: String   
     },
-    contactno: Number,
+    contactno: String,
     gender: Boolean,
     isVisible: { type: Boolean, default: true }
 });

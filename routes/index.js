@@ -11,6 +11,7 @@ var city, address
 router.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     currUsr = res.locals.currentUser;
+    currentCity = req.cookies.city
     //if logged in then this: else currentUser isequals undefined
     if (currUsr != undefined) {
         //store currentUser in temp_user

@@ -14,17 +14,19 @@
             </div>-->
             <div class="col-md-8">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <h2 class="text-left">
                             <%= books.name %>
                         </h2>
                         <h5>Author </h5>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <div class="text-right">
-                            <form id="delete-form" action="/books/<%= books._id %>?_method=DELETE" method="POST">
-                                <input class="btn btn-danger" type="submit" value="Remove book">
-                            </form>
+                            <% if(currentUser && books.owner.id.equals(currentUser._id)){ %>
+                                <form id="delete-form" action="/books/<%= books._id %>?_method=DELETE" method="POST">
+                                    <input class="btn btn-danger" type="submit" value="Remove book">
+                                </form>
+                                <% } %>
                         </div>
                     </div>
                 </div>
@@ -36,14 +38,36 @@
                 </h2>
                 <div class="row">
                     <div class="col-md-7">
-                        <h3>Book Information</h3>
-                        <ul>
-                            <li>Language: English </li>
-                            <li>ISBN number: 45464153345</li>
-                            <li> Pages: 180 </li>
-                            <li>Publisher: Techmax </li>
-                            <li> Author: </li>
-                        </ul>
+                        <% if(books.Language || books.ISBN || books.publisher || books.pages || books.author){ %>
+                            <h3>Book Information</h3>
+                            <ul>
+                                <% if(books.Language){ %>
+                                    <li>Language:
+                                        <%= books.language %>
+                                    </li>
+                                    <% } %>
+                                        <% if(books.ISBN){ %>
+                                            <li>ISBN number:
+                                                <%= books.ISBN %>
+                                            </li>
+                                            <% } %>
+                                                <% if(books.pages){ %>
+                                                    <li> Pages:
+                                                        <%= books.pages %>
+                                                    </li>
+                                                    <% } %>
+                                                        <% if(books.publisher){ %>
+                                                            <li>Publisher:
+                                                                <%= books.publisher %>
+                                                            </li>
+                                                            <% } %>
+                                                                <% if(books.author){ %>
+                                                                    <li> Author:
+                                                                        <%= books.author %>
+                                                                    </li>
+                                                                    <% } %>
+                            </ul>
+                            <% } %>
                     </div>
                     <div class="col-md-5">
                         <div class="card sellerCard">
@@ -67,5 +91,4 @@
         </div>
     </div>
 
-
-        <% include ../partials/footer %>
+    <% include ../partials/footer %>

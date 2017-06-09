@@ -67,7 +67,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/user/<%= currentUser.username %>">
-                                    <%= currentUser.username %> 
+                                    <%= currentUser.username %>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -179,7 +179,7 @@
                                         <br>
                                         <h2> OR </h2>
                                         <br>
-                                        <h3>Login with</h3>
+                                        <h3>Register with</h3>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="btn-group btn-group-justified">
@@ -218,7 +218,7 @@
             <div class="modal-content">
                 <!--Header-->
                 <div class="modal-header">
-                    <h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-map-marker" aria-hidden="true"></i> Select Your city</h4>
+                    <h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-map-marker" aria-hidden="true"></i> &nbsp; Select Your city</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -231,10 +231,8 @@
                                 <form action="/location" method="POST">
                                     <button onclick="getLocation()" type="button" class="btn btn-outline-info waves-effect"><i class="fa fa-location-arrow" aria-hidden="true"></i>  Auto Detect</button>
                                     <br>
-                                    <h2 id="cityName"> </h2>
-                                    <br>
+                                    <p id="cityName"> </p>
                                     <input type="hidden" value="" name="city" id="city_gps" />
-                                    <br>
                                     <h2> OR </h2>
                                     <br>
                                     <h4> Enter city name here </h4>
@@ -326,7 +324,6 @@
                             var length = data.results.length
                             city = data.results[length - 3].address_components[0].long_name
                             address = data.results[0].formatted_address
-                            $("#cityName").text(city);
                             var datalist = document.getElementById("mylist")
                             var doesExist = false
                             for (i = 0; i < datalist.options.length; i++) {
@@ -335,7 +332,10 @@
                                 }
                             }
                             if (doesExist == true) {
+                                $("#cityName").text("Your location is set to "+ city +". If it's not correct,select manually below.");
                                 document.getElementById('city_gps').value = city
+                            } else {
+                                $("#cityName").text("SelBye is currently not available in your location. Please select nearest city")
                             }
 
                         });

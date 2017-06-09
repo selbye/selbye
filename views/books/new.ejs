@@ -26,12 +26,33 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="md-form">
-                        <input type="text" name="name" class="form-control" placeholder="Book Name">
+                        <input type="text" name="name" class="form-control" placeholder="Book Name" required>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <input type="number" name="price" class="form-control" placeholder="Price">
+                    <input type="number" name="price" class="form-control" placeholder="Price" required>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" name="language" class="form-control" placeholder="Language">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="ISBN" class="form-control" placeholder="ISBN Number">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="publisher" class="form-control" placeholder="Publisher">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" name="author" class="form-control" placeholder="Author">
+                </div>
+                <div class="col-md-4">
+                    <input type="number" name="pages" class="form-control" placeholder="Pages">
+                </div>
+
             </div>
             <div class="row">
                 <div class="col-md-12">
@@ -40,10 +61,23 @@
                     </div>
                 </div>
             </div>
+            <h4> Enter you location: </h4>
+            <br>
+            <div class="row">
+                <div class="col-md-12"> City: &nbsp;
+                    <input class="awesomplete" list="mylist" id="auto" name="city" />
+                </div>
+                <div class="col-md-12">
+                <br><p class="red-text"> Select your nearest city if your city isn't listed. </p>
+                </div>
+                <div class="col-md-12">
+                    <br> <input type="text" style="width:20%" name="locality" placeholder="Locality">
+                </div>
+            </div>
             <br>
             <div class="row">
                 <div class="col-md-3">
-                    <h3 class="h3-responsive"> Upload Book image: </h3>
+                    <h4 class="h3-responsive" style="padding-top:15px"> Upload Book image: </h4>
                 </div>
                 <div class="col-md-9">
                     <input type="file" class="btn btn-outline-info waves-effect" name="photo" accept="image/*">
@@ -51,7 +85,6 @@
             </div>
             <br>
             <br>
-
             <div class="row">
                 <div class="col-md-4">
                     <h4>Select Category of book:</h4>
