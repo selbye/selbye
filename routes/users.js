@@ -1,5 +1,5 @@
 var express = require("express");
-var router = express.Router({mergeParams: true});
+var router = express.Router({ mergeParams: true });
 var User = require("../models/user"),
     Book = require("../models/book");
 
@@ -22,14 +22,14 @@ var User = require("../models/user"),
 // User profile
 
 
-var findBook = function findBook(req, res){
-        // Book.find({'owner.username':req.user.username}).exec(function(err, foundBook){
-    Book.find({'owner.username':req.params.id}).exec(function(err, foundBook){
-        if(err){
+var findBook = function findBook(req, res) {
+    // Book.find({'owner.username':req.user.username}).exec(function(err, foundBook){
+    Book.find({ 'owner.username': req.params.id }).exec(function (err, foundBook) {
+        if (err) {
             console.log(err)
-        }else{
+        } else {
             //pass found book and requested username
-            res.render("users/show", {books: foundBook, usr: req.params.id})
+            res.render("users/show", { books: foundBook, usr: req.params.id })
         }
     })
 }
@@ -37,15 +37,26 @@ var findBook = function findBook(req, res){
 router.get("/user/:id", findBook);
 
 
-router.get("/user/:id/profile",checkProfileOwnership, function(req, res){
-    res.render("users/profile");
+router.get("/user/:id/profile", checkProfileOwnership, function (req, res) {
+    User.find({ "username": req.params.id }, function (err, foundUname) {
+        if (err) {
+            console.log(err)
+        } else {
+            if (foundUname.length > 0) {
+                res.render("users/profile", {emailGiven: true});
+            } else {
+                res.render("users/profile", { emailGiven: false });
+            }
+        }
+    })
+    // res.render("users/profile");
 })
 
-router.put("/user/:id", function(req, res){
-    User.findOneAndUpdate({username:req.params.id}, req.body.user).exec(function(err, founduser){
-        if(err){
+router.put("/user/:id", function (req, res) {
+    User.findOneAndUpdate({ username: req.params.id }, req.body.user).exec(function (err, founduser) {
+        if (err) {
             console.log(err)
-        }else{
+        } else {
             res.redirect("back")
         }
     })
@@ -59,14 +70,14 @@ function isLoggedIn(req, res, next) {
     res.redirect("/login");
 }
 
-function checkProfileOwnership(req,res, next){
-    if(req.isAuthenticated()){
-        if(req.params.id == req.user.username){
+function checkProfileOwnership(req, res, next) {
+    if (req.isAuthenticated()) {
+        if (req.params.id == req.user.username) {
             next();
-        }else{
+        } else {
             console.log("please login")
         }
-    }else{
+    } else {
         res.redirect("back")
     }
 }

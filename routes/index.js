@@ -6,6 +6,8 @@ var passport = require("passport"),
     GoogleStrategy = require("passport-google-oauth");
 var User = require("../models/user"),
     Book = require("../models/book");
+var configAuth = require('../config/auth');
+
 
 var city, address
 router.use(function (req, res, next) {
@@ -34,7 +36,7 @@ router.get('/login/facebook/return',
             // console.log(res.locals)
             res.redirect('/');
         } else {
-            res.redirect("/test")
+            res.redirect("/username")
         }
     })
 
@@ -46,7 +48,7 @@ router.get('/login/google/return', passport.authenticate('google', { failureRedi
             // console.log(res.locals.currentUser)
             res.redirect('/');
         } else {
-            res.redirect("/test")
+            res.redirect("/username")
         }
     })
 
@@ -98,31 +100,42 @@ router.get("/logout", function (req, res) {
     res.redirect("/");
 })
 
-router.get("/test", function (req, res) {
-    res.render("profiletest")
+router.get("/username", function (req, res) {
+    res.render("users/uname", { doesExist: false })
 })
 
 //Add username of user logged in with facebook ID
 //username = received from input
 //res.locals.currentUser.facebook.id is current facebook ID
-router.put("/test", function (req, res) {
-    if (req.user.facebook == null) {
-        User.findOneAndUpdate({ 'google.id': res.locals.currentUser.google.id }, { 'username': req.body.username }).exec(function (err, founduser) {
-            if (err) {
-                console.log(err)
+router.put("/username", function (req, res) {
+    User.find({ "username": req.body.username }, function (err, foundUser) {
+        if (err) {
+            console.log(err + "error")
+        } else {
+            if (foundUser.length > 0) {
+                res.render("users/uname", { doesExist: true })
             } else {
-                res.redirect("back")
+                if (req.user.facebook == null) {
+                    User.findOneAndUpdate({ 'google.id': res.locals.currentUser.google.id }, { 'username': req.body.username }).exec(function (err, founduser) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect("/books")
+                        }
+                    })
+                } else if (req.user.google == null) {
+                    User.findOneAndUpdate({ 'facebook.id': res.locals.currentUser.facebook.id }, { 'username': req.body.username }).exec(function (err, founduser) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect("/books")
+                        }
+                    })
+                }
             }
-        })
-    } else if (req.user.google == null) {
-        User.findOneAndUpdate({ 'facebook.id': res.locals.currentUser.facebook.id }, { 'username': req.body.username }).exec(function (err, founduser) {
-            if (err) {
-                console.log(err)
-            } else {
-                res.redirect("back")
-            }
-        })
-    }
+        }
+    })
+
 
 })
 router.post("/location", function (req, res) {
@@ -137,4 +150,53 @@ router.post("/location", function (req, res) {
     res.redirect("back")
 })
 
+router.get("/message/:id", function (req, res) {
+    res.render("users/message", { uname: req.params.id })
+})
+router.post("/message", function (req, res) {
+    user = req.body.uname
+    msg = req.body.msg
+    User.find({ "username": user }, function (err, founduser) {
+        if (err) {
+            console.log(err)
+        } else {
+            email = founduser[0].email
+            if (req.user) {
+                fromUser = req.user.username
+
+                if (email) {
+                    var subject = "New message from" + fromUser
+                    var msg = "You have a new Message from " + fromUser + "\n\n" + msg + "\n\n" +
+                        "Please do not reply to this email. This is an auto generated email." +
+                        "\n To reply back to sender go to this link:" + "http://selbye.com/message" + fromUser
+                    // sendgrid email send
+                    var helper = require('sendgrid').mail;
+                    var fromEmail = new helper.Email('no-reply@selbye.com');
+                    var toEmail = new helper.Email(email);
+                    var subject = subject;
+                    var content = new helper.Content('text/plain', msg);
+                    var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+
+                    var sg = require('sendgrid')(configAuth.sendgridAuth.api);
+                    var request = sg.emptyRequest({
+                        method: 'POST',
+                        path: '/v3/mail/send',
+                        body: mail.toJSON()
+                    });
+                    sg.API(request, function (error, response) {
+                        if (error) {
+                            console.log('Error response received');
+                        }
+                    });
+                    res.redirect("back")
+                }
+                else {
+                    console.log("User has not specified his email ID sorry!")
+                }
+            } else {
+                console.log("Please login first")
+            }
+        }
+    })
+})
 module.exports = router;

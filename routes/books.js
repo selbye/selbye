@@ -98,7 +98,7 @@ router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, ne
     } catch (err) {
         var newBook = {
             name: name, price: price, desc: desc, image: image,
-            pages: pages, author: author, publisher: publisher, ISBN: ISBN,city: city, locality: locality, owner: owner, category: category
+            pages: pages, author: author, publisher: publisher, ISBN: ISBN, city: city, locality: locality, owner: owner, category: category
         }
     }
 
@@ -141,9 +141,14 @@ router.get("/books/:id", function (req, res) {
 //List of all books AKA home page
 router.get("/books", function (req, res) {
     cat = req.query.cat
+    page = req.query.page
+    if (!page) {
+        page == 1
+    }
+    min = (page - 1) * 12
     if (req.cookies.city) {
         if (cat) {
-            Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }, function (err, allBooks) {
+            Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
@@ -152,14 +157,15 @@ router.get("/books", function (req, res) {
                         if (err) {
                             console.log(err)
                         } else {
-                            res.render("books/index", { books: allBooks, categories: allCats });
+                            Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }, function (err, booksFound) {
+                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: cat });
+                            })
                         }
-
                     })
                 }
-            }).sort({createdAt:-1})
+            })
         } else {
-            Book.find({ city: req.cookies.city }, function (err, allBooks) {
+            Book.find({ city: req.cookies.city }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
@@ -168,16 +174,17 @@ router.get("/books", function (req, res) {
                         if (err) {
                             console.log(err)
                         } else {
-                            res.render("books/index", { books: allBooks, categories: allCats });
+                            Book.find({ city: req.cookies.city }, function (err, booksFound) {
+                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length,page: page,currentCategory:null });
+                            })
                         }
-
                     })
                 }
-            }).sort({createdAt:-1})
+            })
         }
     } else {
         if (cat) {
-            Book.find({ category: cat }, function (err, allBooks) {
+            Book.find({ category: cat }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
@@ -186,14 +193,15 @@ router.get("/books", function (req, res) {
                         if (err) {
                             console.log(err)
                         } else {
-                            res.render("books/index", { books: allBooks, categories: allCats });
+                            Book.find({ category: cat  }, function (err, booksFound) {
+                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: cat });
+                            })
                         }
-
                     })
                 }
-            }).sort({createdAt:-1})
+            })
         } else {
-            Book.find({}, function (err, allBooks) {
+            Book.find().sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
@@ -202,12 +210,14 @@ router.get("/books", function (req, res) {
                         if (err) {
                             console.log(err)
                         } else {
-                            res.render("books/index", { books: allBooks, categories: allCats });
+                            Book.find({}, function (err, booksFound) {
+                                var totalBooks = booksFound.length
+                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: totalBooks,page: page,currentCategory: null });
+                            })
                         }
-
                     })
                 }
-            }).sort({createdAt:-1})
+            })
         }
     }
 })

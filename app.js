@@ -11,12 +11,12 @@ var mongoose = require("mongoose"),
     User = require("./models/user"),
     Book = require("./models/book"),
     Category = require("./models/categories")
-    fs = require("file-system"),
+fs = require("file-system"),
     // multer = require('multer'),
     // upload = multer({ dest: './uploads' }),
     server = require("http").Server(app),
     io = require('socket.io')(server)
-    var configAuth = require('./config/auth');
+var configAuth = require('./config/auth');
 
 // app.use(multer({dest:'./uploads/'}))
 
@@ -71,6 +71,7 @@ passport.use(new FacebookStrategy({
                     newUser.facebook.id = profile.id;
                     newUser.facebook.token = accessToken;
                     newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
+                    newUser.email = (profile.emails[0].value || '').toLowerCase();
                     newUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
                     newUser.save(function (err) {
                         if (err)
@@ -101,6 +102,7 @@ passport.use(new GoogleStrategy({
                     newUser.google.id = profile.id;
                     newUser.google.token = token;
                     newUser.google.name = profile.displayName;
+                    newUser.email = profile.emails[0].value;
                     newUser.google.email = profile.emails[0].value;
                     newUser.save(function (err) {
                         if (err)
@@ -171,35 +173,35 @@ app.use(bookRoutes);
 // })
 
 // sendgrid email send
-var helper = require('sendgrid').mail;
-var fromEmail = new helper.Email('yo@selbye.com');
-var toEmail = new helper.Email('kunalht1@gmail.com');
-var subject = 'Guess who the sender IS??';
-var content = new helper.Content('text/plain', 'Hello, Email!');
-var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+// var helper = require('sendgrid').mail;
+// var fromEmail = new helper.Email('yo@selbye.com');
+// var toEmail = new helper.Email('kunalht1@gmail.com');
+// var subject = 'Guess who the sender IS??';
+// var content = new helper.Content('text/plain', 'Hello, Email!');
+// var mail = new helper.Mail(fromEmail, subject, toEmail, content);
 
-var sg = require('sendgrid')(configAuth.sendgridAuth.api);
-var request = sg.emptyRequest({
-  method: 'POST',
-  path: '/v3/mail/send',
-  body: mail.toJSON()
-});
+// var sg = require('sendgrid')(configAuth.sendgridAuth.api);
+// var request = sg.emptyRequest({
+//   method: 'POST',
+//   path: '/v3/mail/send',
+//   body: mail.toJSON()
+// });
 
-sg.API(request, function (error, response) {
-  if (error) {
-    console.log('Error response received');
-  }
-  console.log(response.statusCode);
-  console.log(response.body);
-  console.log(response.headers);
-});
+// sg.API(request, function (error, response) {
+//   if (error) {
+//     console.log('Error response received');
+//   }
+//   console.log(response.statusCode);
+//   console.log(response.body);
+//   console.log(response.headers);
+// });
 
 
 
-app.get("/geo", function(req, res){
+app.get("/geo", function (req, res) {
     res.render("geo")
 })
-app.post("/geo", function(req, res){
+app.post("/geo", function (req, res) {
     console.log(req.body)
 })
 
