@@ -6,19 +6,21 @@
         <div class="row">
             <!--Sidebar-->
             <div class="col-lg-3">
-                <% if(categories.length>0){ %>
-                    <div class="widget-wrapper">
-                        <h4>Categories:</h4>
-                        <br>
-                        <div class="list-group">
-                            <% categories.forEach(function(category){ %>
-                                <a href="/books/?cat=<%= category._id %>" class="list-group-item">
-                                    <%= category._id %>
-                                </a>
-                                <% }) %>
+                <% if(categories){ %>
+                    <% if(categories.length>0){ %>
+                        <div class="widget-wrapper">
+                            <h4>Categories:</h4>
+                            <br>
+                            <div class="list-group">
+                                <% categories.forEach(function(category){ %>
+                                    <a href="/books/?cat=<%= category._id %>" class="list-group-item">
+                                        <%= category._id %>
+                                    </a>
+                                    <% }) %>
+                            </div>
                         </div>
-                    </div>
-                    <% } %>
+                        <% } %>
+                            <% } %>
             </div>
             <div class="col-lg-9">
                 <% if(books.length>0){ %>
@@ -68,55 +70,73 @@
                                     <% } %>
                     </div>
                     <!--pagination-->
-<br><br>
-        <% if(totalBooks>0){ %>
-            <% var pagesVar = totalBooks/12 %>
-                <% pages = parseInt(pagesVar+1) %>
-                    <% if(!page){ %>
-                        <%  page == 1 %>
-                            <% } %>
-                                <nav>
-                                    <ul class="pagination"> 
-                                        <% for(var i = 1; i<= pages;i+=1){ %>
-                                            <% if(currentCategory){ %>
-                                                <% if(!page){ page = 1 } %>
-                                                    <% if(page == i){ %>
-                                                        <li class="page-item active">
-                                                            <a class="page-link" href="/books?cat=<%= currentCategory %>&page=<%= i %>">
-                                                                <%= i %>
-                                                            </a>
-                                                        </li>
-                                                        <% }else{ %>
-                                                            <li class="page-item">
-                                                                <a class="page-link" href="/books?cat=<%= currentCategory %>&page=<%= i %>">
-                                                                    <%= i %>
-                                                                </a>
-                                                            </li>
-                                                            <% } %>
-                                                                <% }else{ %>
-                                                                    <% if(!page){ page = 1 } %>
-                                                                        <% if(page == i){ %>
-                                                                            <li class="page-item active">
-                                                                                <a class="page-link" href="/books?page=<%= i %>">
-                                                                                    <%= i %>
-                                                                                </a>
-                                                                            </li>
-                                                                            <% }else{ %>
-                                                                                <li class="page-item">
-                                                                                    <a class="page-link" href="/books?page=<%= i %>">
-                                                                                        <%= i %>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <% } %>
-                                                                                    <% } %>
-                                                                                        <% } %>
-                                    </ul>
-                                </nav>
+ <br><br>
+ <% if(totalBooks>0){ %>
+  <% var pagesVar = totalBooks/12 %>
+ <% pages = parseInt(pagesVar+1) %>
+ <% if(!page){ %>
+  <%  page == 1 %>
+  <% } %>
+<nav>
+  <ul class="pagination">
+<% for(var i = 1; i<= pages;i+=1){ %>
+  <% if(currentCategory){ %>
+<% if(!page){ page = 1 } %>
+<% if(page == i){ %>
+<li class="page-item active">
+   <a class="page-link" href="/books?cat=<%= currentCategory %>&page=<%= i %>">
+       <%= i %>
+   </a>
+         </li>
+         <% }else{ %>
+   <li class="page-item">
+       <a class="page-link" href="/books?cat=<%= currentCategory %>&page=<%= i %>">
+           <%= i %>
+                     </a>
+      </li>
+                           <% } %>
+                <% }else{ %>
+                <% if(query){ %>
+                <% if(!page){ page = 1 } %>
+                        <% if(page == i){ %>
+  <li class="page-item active">
+      <a class="page-link" href="/books?page=<%= i %>&q=<%= query %>">
+          <%= i %>
+      </a>
+  </li>
+  <% }else{ %>
+      <li class="page-item">
+          <a class="page-link" href="/books?page=<%= i %>&q=<%= query %>">
+              <%= i %>
+          </a>
+      </li>
+ <% } %>
 
-                                <% } %>
-                    <!--/pagination-->
+<% }else{ %>
+                    <% if(!page){ page = 1 } %>
+                        <% if(page == i){ %>
+  <li class="page-item active">
+      <a class="page-link" href="/books?page=<%= i %>">
+          <%= i %>
+      </a>
+  </li>
+  <% }else{ %>
+      <li class="page-item">
+          <a class="page-link" href="/books?page=<%= i %>">
+              <%= i %>
+          </a>
+      </li>
+ <% } %>
+ <% } %>
+
+<% } %>
+ <% } %>
+ </ul>
+</nav>
+ <% } %>
+  <!--/pagination-->
             </div>
         </div>
     </div>
 
-                                        <% include ../partials/footer %>
+    <% include ../partials/footer %>

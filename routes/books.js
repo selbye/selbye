@@ -142,86 +142,116 @@ router.get("/books/:id", function (req, res) {
 router.get("/books", function (req, res) {
     cat = req.query.cat
     page = req.query.page
+    query = req.query.q
     if (!page) {
         page == 1
     }
     min = (page - 1) * 12
-    if (req.cookies.city) {
-        if (cat) {
-            Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+    if (query) {
+        if (req.cookies.city) {
+            Book.find({ $and: [{ city: req.cookies.city }, { "name": { $regex: ".*" + query + ".*",$options:"i" } }] }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
-                    reg = "," + cat
-                    Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }, function (err, booksFound) {
-                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: cat });
-                            })
-                        }
+                    Book.find({ $and: [{ city: req.cookies.city }, { "name": { $regex: ".*" + query + ".*" ,$options:"i" } }] }, function (err, booksFound) {
+                        res.render("books/index", { books: allBooks,categories: null, totalBooks: booksFound.length, page: page, currentCategory: null,query:query });
                     })
                 }
             })
         } else {
-            Book.find({ city: req.cookies.city }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+            Book.find({ "name": { $regex: ".*" + query + ".*",$options:"i"  } }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
-                    reg = ",books"
-                    Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            Book.find({ city: req.cookies.city }, function (err, booksFound) {
-                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length,page: page,currentCategory:null });
-                            })
-                        }
+                    Book.find({ "name": { $regex: ".*" + query + ".*",$options:"i"  } }, function (err, booksFound) {
+                        var totalBooks = booksFound.length
+                        res.render("books/index", { books: allBooks, categories: null, totalBooks: totalBooks, page: page, currentCategory: null ,query:query });
                     })
                 }
             })
         }
     } else {
-        if (cat) {
-            Book.find({ category: cat }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
-                if (err) {
-                    console.log(err)
-                } else {
-                    reg = "," + cat
-                    Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            Book.find({ category: cat  }, function (err, booksFound) {
-                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: cat });
-                            })
-                        }
-                    })
-                }
-            })
+        if (req.cookies.city) {
+            if (cat) {
+                Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        reg = "," + cat
+                        Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                Book.find({ $and: [{ city: req.cookies.city }, { category: cat }] }, function (err, booksFound) {
+                                    res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: cat });
+                                })
+                            }
+                        })
+                    }
+                })
+            } else {
+                Book.find({ city: req.cookies.city }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        reg = ",books"
+                        Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                Book.find({ city: req.cookies.city }, function (err, booksFound) {
+                                    res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: null });
+                                })
+                            }
+                        })
+                    }
+                })
+            }
         } else {
-            Book.find().sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
-                if (err) {
-                    console.log(err)
-                } else {
-                    reg = ",books"
-                    Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            Book.find({}, function (err, booksFound) {
-                                var totalBooks = booksFound.length
-                                res.render("books/index", { books: allBooks, categories: allCats, totalBooks: totalBooks,page: page,currentCategory: null });
-                            })
-                        }
-                    })
-                }
-            })
+            if (cat) {
+                Book.find({ category: cat }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        reg = "," + cat
+                        Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                Book.find({ category: cat }, function (err, booksFound) {
+                                    res.render("books/index", { books: allBooks, categories: allCats, totalBooks: booksFound.length, page: page, currentCategory: cat });
+                                })
+                            }
+                        })
+                    }
+                })
+            } else {
+                Book.find().sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        reg = ",books"
+                        Category.find({ "path": { $regex: ".*" + reg + ".$" } }, function (err, allCats) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                Book.find({}, function (err, booksFound) {
+                                    var totalBooks = booksFound.length
+                                    res.render("books/index", { books: allBooks, categories: allCats, totalBooks: totalBooks, page: page, currentCategory: null });
+                                })
+                            }
+                        })
+                    }
+                })
+            }
         }
     }
 })
 
+router.post("/search",function(req, res){
+    query= req.body.query
+    res.redirect("/books?q="+query)
+})
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();

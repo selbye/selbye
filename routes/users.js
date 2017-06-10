@@ -24,7 +24,7 @@ var User = require("../models/user"),
 
 var findBook = function findBook(req, res) {
     // Book.find({'owner.username':req.user.username}).exec(function(err, foundBook){
-    Book.find({ 'owner.username': req.params.id }).exec(function (err, foundBook) {
+    Book.find({ 'owner.username': req.params.id }).sort({ createdAt: -1 }).exec(function (err, foundBook) {
         if (err) {
             console.log(err)
         } else {
