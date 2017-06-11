@@ -41,9 +41,11 @@ router.get("/user/:id/profile", checkProfileOwnership, function (req, res) {
     User.find({ "username": req.params.id }, function (err, foundUname) {
         if (err) {
             console.log(err)
+            req.flash("error", "Error. Please try again")
+            res.redirect("/books")
         } else {
             if (foundUname.length > 0) {
-                res.render("users/profile", {emailGiven: true});
+                res.render("users/profile", { emailGiven: true });
             } else {
                 res.render("users/profile", { emailGiven: false });
             }
@@ -56,8 +58,10 @@ router.put("/user/:id", function (req, res) {
     User.findOneAndUpdate({ username: req.params.id }, req.body.user).exec(function (err, founduser) {
         if (err) {
             console.log(err)
+            req.flash("error", "User not found.")
+            res.redirect("/books")
         } else {
-            res.redirect("back")
+            res.redirect("/books")
         }
     })
 })

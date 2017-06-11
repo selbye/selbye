@@ -155,12 +155,12 @@
                                 <div class="modal-body">
                                     <div class="md-form form-sm">
                                         <i class="fa fa-envelope prefix"></i>
-                                        <input type="text" name="username" placeholder="Username" id="form24" class="form-control">
+                                        <input type="text" name="username" placeholder="Username" id="form24" pattern=".{6,}" title="Username should have atleast six characters" class="form-control">
                                         <!--<label for="form24">Your email</label>-->
                                     </div>
                                     <div class="md-form form-sm">
                                         <i class="fa fa-lock prefix"></i>
-                                        <input type="password" name="password" placeholder="Password" id="form25" class="form-control">
+                                        <input type="password" name="password" placeholder="Password" pattern=".{8,}" title="Password should have atleast eight characters" id="form25" class="form-control">
                                         <!--<label for="form25">Your password</label>-->
                                     </div>
                                     <!--<div class="md-form form-sm">
@@ -256,102 +256,115 @@
 
     <!-- City select modal -->
     <!--<input class="awesomplete" list="mylist" id="auto" />-->
+    <br><br><br>
+    <div class="container">
+        <% if(success && success.length>0){ %>
+        <div class="alert alert-success" role="alert">
+            <%= success %>
+        </div>
+        <% } %>
+        <% if(error && error.length>0){ %>
+        <div class="alert alert-danger" role="alert">
+            <%= error %>
+        </div>
+        <% } %>
+    </div>
+    <!--<%# include ../partials/auto.html %>-->
     <br>
-    <%# include ../partials/auto.html %>
-        <br>
-        <datalist id="mylist" class="list">
-            <option>Ahmedabad</option>
-            <option>Somnath</option>
-            <option>Dwarka</option>
-            <option>Surat</option>
-            <option>Bhuj</option>
-            <option>Gandhinagar</option>
-            <option>Junagadh</option>
-            <option>Bhavnagar</option>
-            <option>Vadodara</option>
-            <option>Rajkot</option>
-            <option>Jamnagar</option>
-            <option>Porbandar</option>
-            <option>Amreli</option>
-            <option>Anand</option>
-            <option>Banaskantha</option>
-            <option>Bharuch</option>
-            <option>Dahod</option>
-            <option>Kutch</option>
-            <option>Kheda</option>
-            <option>Mehsana</option>
-            <option>Navsari</option>
-            <option>Patan</option>
-            <option>Panchmahal</option>
-            <option>Sabarkantha</option>
-            <option>Surendranagar</option>
-            <option>Valsad</option>
-            <option>Vapi</option>
+    <datalist id="mylist" class="list">
+        <option>Ahmedabad</option>
+        <option>Somnath</option>
+        <option>Dwarka</option>
+        <option>Surat</option>
+        <option>Bhuj</option>
+        <option>Gandhinagar</option>
+        <option>Junagadh</option>
+        <option>Bhavnagar</option>
+        <option>Vadodara</option>
+        <option>Rajkot</option>
+        <option>Jamnagar</option>
+        <option>Porbandar</option>
+        <option>Amreli</option>
+        <option>Anand</option>
+        <option>Banaskantha</option>
+        <option>Bharuch</option>
+        <option>Dahod</option>
+        <option>Kutch</option>
+        <option>Kheda</option>
+        <option>Mehsana</option>
+        <option>Navsari</option>
+        <option>Patan</option>
+        <option>Panchmahal</option>
+        <option>Sabarkantha</option>
+        <option>Surendranagar</option>
+        <option>Valsad</option>
+        <option>Vapi</option>
 
-        </datalist>
-        <a id="text"> </a>
-        <script>
-            //Check if the input is from options or not 
-            var inputs = document.querySelectorAll('.awesomplete');
-            for (var i = 0; i < inputs.length; i++) {
-                // When the value of the input changes...
-                inputs[i].addEventListener('change', function () {
-                    var optionFound = false,
-                        datalist = document.getElementById("mylist")
-                    // Determine whether an option exists with the current value of the input.
-                    for (var j = 0; j < datalist.options.length; j++) {
-                        if (this.value == datalist.options[j].value) {
-                            var cityName = this.value
-                            optionFound = true;
-                            break;
+    </datalist>
+    <a id="text"> </a>
+
+    <script>
+        //Check if the input is from options or not 
+        var inputs = document.querySelectorAll('.awesomplete');
+        for (var i = 0; i < inputs.length; i++) {
+            // When the value of the input changes...
+            inputs[i].addEventListener('change', function () {
+                var optionFound = false,
+                    datalist = document.getElementById("mylist")
+                // Determine whether an option exists with the current value of the input.
+                for (var j = 0; j < datalist.options.length; j++) {
+                    if (this.value == datalist.options[j].value) {
+                        var cityName = this.value
+                        optionFound = true;
+                        break;
+                    }
+                }
+                // use the setCustomValidity function of the Validation API
+                // to provide an user feedback if the value does not exist in the datalist
+                if (optionFound) {
+                    document.getElementById('city_list').value = cityName
+                }
+            });
+        }
+        // GEO Location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    api = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
+                        position.coords.latitude + "," + position.coords.longitude +
+                        "&key=AIzaSyDAa6gPwQ_qGEiEjMOddgGyY3bDDTsGSnE"
+                    $.getJSON(api, function (data) {
+                        var length = data.results.length
+                        city = data.results[length - 3].address_components[0].long_name
+                        address = data.results[0].formatted_address
+                        var datalist = document.getElementById("mylist")
+                        var doesExist = false
+                        for (i = 0; i < datalist.options.length; i++) {
+                            if (city.toUpperCase() === datalist.options[i].value.toUpperCase()) {
+                                doesExist = true
+                            }
                         }
-                    }
-                    // use the setCustomValidity function of the Validation API
-                    // to provide an user feedback if the value does not exist in the datalist
-                    if (optionFound) {
-                        document.getElementById('city_list').value = cityName
-                    }
+                        if (doesExist == true) {
+                            $("#cityName").text("Your location is set to " + city + ". If it's not correct,select manually below.");
+                            document.getElementById('city_gps').value = city
+                        } else {
+                            $("#cityName").text("SelBye is currently not available in your location. Please select nearest city")
+                        }
+
+                    });
                 });
             }
-            // GEO Location
-            function getLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        api = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
-                            position.coords.latitude + "," + position.coords.longitude +
-                            "&key=AIzaSyDAa6gPwQ_qGEiEjMOddgGyY3bDDTsGSnE"
-                        $.getJSON(api, function (data) {
-                            var length = data.results.length
-                            city = data.results[length - 3].address_components[0].long_name
-                            address = data.results[0].formatted_address
-                            var datalist = document.getElementById("mylist")
-                            var doesExist = false
-                            for (i = 0; i < datalist.options.length; i++) {
-                                if (city.toUpperCase() === datalist.options[i].value.toUpperCase()) {
-                                    doesExist = true
-                                }
-                            }
-                            if (doesExist == true) {
-                                $("#cityName").text("Your location is set to "+ city +". If it's not correct,select manually below.");
-                                document.getElementById('city_gps').value = city
-                            } else {
-                                $("#cityName").text("SelBye is currently not available in your location. Please select nearest city")
-                            }
+        }
 
-                        });
-                    });
-                }
-            }
+        //C OOkie
+        function getCookie(name) {
+            var value = "; " + document.cookie
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+        if (getCookie("city")) {
+            document.getElementById("citySelect").innerHTML = getCookie("city")
+        } else {
 
-            //C OOkie
-            function getCookie(name) {
-                var value = "; " + document.cookie
-                var parts = value.split("; " + name + "=");
-                if (parts.length == 2) return parts.pop().split(";").shift();
-            }
-            if (getCookie("city")) {
-                document.getElementById("citySelect").innerHTML = getCookie("city")
-            } else {
-
-            }
-        </script>
+        }
+    </script>

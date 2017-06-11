@@ -9,11 +9,13 @@ var User = require("../models/user"),
 var configAuth = require('../config/auth');
 
 
-var city, address
+// var city, address
 router.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     currUsr = res.locals.currentUser;
     currentCity = req.cookies.city
+    res.locals.error = req.flash("error")
+    res.locals.success = req.flash("success")
     //if logged in then this: else currentUser isequals undefined
     if (currUsr != undefined) {
         //store currentUser in temp_user
@@ -33,8 +35,7 @@ router.get('/login/facebook/return',
     passport.authenticate('facebook', { failureRedirect: '/login', session: true }),
     function (req, res) {
         if (req.user.username != null) {
-            // console.log(res.locals)
-            res.redirect('/');
+            res.redirect('back');
         } else {
             res.redirect("/username")
         }
@@ -45,17 +46,16 @@ router.get('/login/google', passport.authenticate('google', { scope: ['profile',
 router.get('/login/google/return', passport.authenticate('google', { failureRedirect: '/login', session: true }),
     function (req, res) {
         if (req.user.username != null) {
-            // console.log(res.locals.currentUser)
-            res.redirect('/');
+            res.redirect("back");
         } else {
             res.redirect("/username")
         }
     })
 
 //Socket test
-router.get("/socket", function (req, res) {
-    res.render("socket")
-})
+// router.get("/socket", function (req, res) {
+//     res.render("socket")
+// })
 
 // io.on('connection', function(socket){
 //   socket.on('chat message', function(msg){
@@ -64,40 +64,46 @@ router.get("/socket", function (req, res) {
 // });
 
 //AUTHENTICATION ROUTES
-router.get("/register", function (req, res) {
-    res.render("register.ejs")
-})
+// router.get("/register", function (req, res) {
+//     res.render("register.ejs")
+// })
 //sign up logic
 router.post("/register", function (req, res) {
     var newUser = new User({ username: req.body.username });
     User.register(newUser, req.body.password, function (err, user) {
         if (err) {
-            console.log(err);
-            return res.render("register");
+            req.flash("error", err.message)
+            res.redirect("/books")
         }
         passport.authenticate("local")(req, res, function () {
-            res.redirect("/");
+            res.redirect("back");
         })
     })
 })
 
 //Login 
-router.get("/login", function (req, res) {
-    // console.log(req.isAuthenticated())
-    // console.log(req.cookies.city)
-    res.render("login");
-})
+// router.get("/login", function (req, res) {
+//     res.render("login");
+// })
 
-router.post("/login", passport.authenticate("local",
-    {
-        successRedirect: "/",
-        filureRedirect: "/login"
-    }), function (req, res) {
+router.post('/login',
+    passport.authenticate('local', {
+        successRedirect: 'back',
+        failureRedirect: '/books',
+        failureFlash: true
     })
+);
+// router.post("/login", passport.authenticate("local",
+//     {
+//         successRedirect: "back",
+//         filureRedirect: "/login"
+//     }), function (req, res) {
+//     })
 
 router.get("/logout", function (req, res) {
     req.logout();
-    res.redirect("/");
+    req.flash("success", "Logged you out")
+    res.redirect("/books");
 })
 
 router.get("/username", function (req, res) {
@@ -110,7 +116,8 @@ router.get("/username", function (req, res) {
 router.put("/username", function (req, res) {
     User.find({ "username": req.body.username }, function (err, foundUser) {
         if (err) {
-            console.log(err + "error")
+            console.log(err)
+            req.flash("error", "Error occurred.Please try again.")
         } else {
             if (foundUser.length > 0) {
                 res.render("users/uname", { doesExist: true })

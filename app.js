@@ -10,6 +10,7 @@ var mongoose = require("mongoose"),
     GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     User = require("./models/user"),
     Book = require("./models/book"),
+    flash =require("connect-flash"),
     Category = require("./models/categories")
 fs = require("file-system"),
     // multer = require('multer'),
@@ -41,7 +42,7 @@ app.use(express.static(__dirname + "/images"))
 app.use(methodOverride("_method"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser())
-
+app.use(flash())
 //passport configuration
 app.use(require("express-session")({
     secret: "M3 is the best car ever",

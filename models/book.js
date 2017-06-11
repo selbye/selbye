@@ -21,7 +21,8 @@ var bookSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
-        username: String
+        username: String,
+        contactno: String
     },
     category: [
     ]

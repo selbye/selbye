@@ -82,7 +82,8 @@ router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, ne
     // Owner array contains username and userID
     var owner = {
         id: req.user._id,
-        username: req.user.username
+        username: req.user.username,
+        contactno: req.user.contactno
     }
     category = [
         req.body.category,
@@ -105,6 +106,7 @@ router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, ne
     Book.create(newBook, function (err, newlyCreated) {
         if (err) {
             console.log(err)
+            req.flash("error", "Error occurred. Please try again.")
         } else {
             res.redirect("/books")
         }
@@ -112,16 +114,29 @@ router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, ne
 })
 
 
-//Update book info
-// app.put("/books/:id", function(req, res){
-//     Book.findByIdAndUpdate()
-// })
+router.get("/books/:id/edit", checkBookOwnership, function (req, res) {
+    Book.findById({ "_id": req.params.id }, function (err, foundBook) {
+        res.render("books/edit.ejs", { book: foundBook })
+    })
+})
+// Update book info
+router.put("/books/:id", checkBookOwnership, function (req, res) {
+    Book.findByIdAndUpdate(req.params.id, req.body.book, function (err, updatedBook) {
+        if (err) {
+            console.log(err)
+            req.flash("error", "Error occurred.Please try again.")
+        } else {
+            res.redirect("/books/" + req.params.id)
+        }
+    })
+})
 
 router.delete("/books/:id", checkBookOwnership, function (req, res) {
     Book.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
             console.log(err)
         } else {
+            req.flash("error", "Error deleting your book.Please try again.")
             res.redirect("/books")
         }
     })
@@ -132,6 +147,7 @@ router.get("/books/:id", function (req, res) {
     Book.findById(req.params.id).exec(function (err, foundBook) {
         if (err) {
             console.log(err)
+            req.flash("error", "Error")
         } else {
             res.render("books/show.ejs", { books: foundBook });
         }
@@ -149,23 +165,23 @@ router.get("/books", function (req, res) {
     min = (page - 1) * 12
     if (query) {
         if (req.cookies.city) {
-            Book.find({ $and: [{ city: req.cookies.city }, { "name": { $regex: ".*" + query + ".*",$options:"i" } }] }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+            Book.find({ $and: [{ city: req.cookies.city }, { "name": { $regex: ".*" + query + ".*", $options: "i" } }] }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
-                    Book.find({ $and: [{ city: req.cookies.city }, { "name": { $regex: ".*" + query + ".*" ,$options:"i" } }] }, function (err, booksFound) {
-                        res.render("books/index", { books: allBooks,categories: null, totalBooks: booksFound.length, page: page, currentCategory: null,query:query });
+                    Book.find({ $and: [{ city: req.cookies.city }, { "name": { $regex: ".*" + query + ".*", $options: "i" } }] }, function (err, booksFound) {
+                        res.render("books/index", { books: allBooks, categories: null, totalBooks: booksFound.length, page: page, currentCategory: null, query: query });
                     })
                 }
             })
         } else {
-            Book.find({ "name": { $regex: ".*" + query + ".*",$options:"i"  } }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
+            Book.find({ "name": { $regex: ".*" + query + ".*", $options: "i" } }).sort({ createdAt: -1 }).skip(min).limit(12).exec(function (err, allBooks) {
                 if (err) {
                     console.log(err)
                 } else {
-                    Book.find({ "name": { $regex: ".*" + query + ".*",$options:"i"  } }, function (err, booksFound) {
+                    Book.find({ "name": { $regex: ".*" + query + ".*", $options: "i" } }, function (err, booksFound) {
                         var totalBooks = booksFound.length
-                        res.render("books/index", { books: allBooks, categories: null, totalBooks: totalBooks, page: page, currentCategory: null ,query:query });
+                        res.render("books/index", { books: allBooks, categories: null, totalBooks: totalBooks, page: page, currentCategory: null, query: query });
                     })
                 }
             })
@@ -248,33 +264,37 @@ router.get("/books", function (req, res) {
     }
 })
 
-router.post("/search",function(req, res){
-    query= req.body.query
-    res.redirect("/books?q="+query)
+router.post("/search", function (req, res) {
+    query = req.body.query
+    res.redirect("/books?q=" + query)
 })
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect("back")
+    req.flash("error", "Please Login first")
+    res.redirect("/books")
 }
 
 function checkBookOwnership(req, res, next) {
     if (req.isAuthenticated()) {
         Book.findById(req.params.id, function (err, foundBook) {
             if (err) {
+                req.flash("error", "Error occurred.Please try again.")
                 res.redirect("/books")
             } else {
                 //Does user owns the Book?
                 if (foundBook.owner.id.equals(req.user._id)) {
                     next();
                 } else {
-                    res.redirect("back");
+                    req.flash("error", "Error ")
+                    res.redirect("/books");
                 }
             }
         })
     } else {
-        res.redirect("back")
+        req.flash("error", "Please login first.")
+        res.redirect("/books")
     }
 }
 
