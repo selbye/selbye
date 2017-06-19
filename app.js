@@ -134,30 +134,33 @@ app.use(bookRoutes);
 // Category.create({_id:"books",path: null})
 // Category.create({_id:"GTU books",path: ",books,"})
 // Category.create({_id:"Novels",path: ",books,"})
-// Category.create({_id:"Action",path: ",books,Novels,"})
-// Category.create({_id:"Drama",path: ",books,Novels,"})
+// Category.create({_id:"Commerce & Arts",path: ",books,"})
+// Category.create({_id:"Action & Adventure",path: ",books,Novels,"})
+// Category.create({_id:"Crime,Thriller & Mystery",path: ",books,Novels,"})
+// Category.create({_id:"Fantasy,Horror",path: ",books,Novels,"})
+// Category.create({_id:"History",path: ",books,Novels,"})
+// Category.create({_id:"Science and technology",path: ",books,Novels,"})
 // Category.create({_id:"10-12th",path: ",books,"})
 // Category.create({_id:"10th",path: ",books,10-12th,"})
 // Category.create({_id:"11th",path: ",books,10-12th,"})
 // Category.create({_id:"12th",path: ",books,10-12th,"})
 // Category.create({_id:"1-9th",path: ",books,"})
+// Category.create({_id:"1st",path: ",books,1-9th,"})
+// Category.create({_id:"2nd",path: ",books,1-9th,"})
 // Category.create({_id:"3rd",path: ",books,1-9th,"})
 // Category.create({_id:"4th",path: ",books,1-9th,"})
+// Category.create({_id:"5th",path: ",books,1-9th,"})
+// Category.create({_id:"6th",path: ",books,1-9th,"})
+// Category.create({_id:"7th",path: ",books,1-9th,"})
+// Category.create({_id:"8th",path: ",books,1-9th,"})
+// Category.create({_id:"9th",path: ",books,1-9th,"})
 // Category.create({_id:"Computer Science",path: ",books,GTU books,"})
-// Category.create({_id:"AAD",path: ",books,GTU books,Computer Science,"})
 // Category.create({_id:"Mechanical Engineering",path: ",books,GTU books,"})
+// Category.create({_id:"Electrical Engineering",path: ",books,GTU books,"})
+// Category.create({_id:"EC",path: ",books,GTU books,"})
+// Category.create({_id:"Others",path: ",books,GTU books,"})
+
 // Category.create({_id:"Civil Engineering",path: ",books,GTU books,"})
-
-
-
-
-
-
-
-
-
-
-
 
 // app.use(function (req, res, next) {
 //     res.locals.currentUser = req.user;

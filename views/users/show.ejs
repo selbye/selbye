@@ -2,10 +2,12 @@
     <br>
     <br>
     <div class="container">
-        <% if(books.length>0){ %>
-            <div class="row">
+        <div class="row">
+            <% if(books.length>0){ %>
                 <div class="col-md-8 text-left">
-                    <h1>All books uploaded by <%= books[0].owner.username %> </h1>
+                    <h1>All books uploaded by
+                        <%= books[0].owner.username %>
+                    </h1>
                 </div>
                 <% if(currentUser && books[0].owner.id.equals(currentUser._id)){ %>
                     <div class="col-md-4 text-right">
@@ -14,10 +16,25 @@
                         </form>
                     </div>
                     <% } %>
-                        <% } %>
-            </div>
-            <% for(var i=0;i<books.length;i++){ %>
-                <% if(i%3 == 0 && i!= 0){ %>
+                        <% }else{ %>
+                            <div class="col-md-8 text-left">
+                                <h1> You haven't uploaded any books yet.
+                                </h1>
+                            </div>
+                            <% if(currentUser){ %>
+                                    <% if(currentUser.username === usr){ %>
+
+                                        <div class="col-md-4 text-right">
+                                            <form action="/user/<%= currentUser.username%>/profile">
+                                                <input type="submit" class="btn btn-danger" value="Change profile">
+                                            </form>
+                                        </div>
+                                        <% } %>
+                                        <% } %>
+                                            <% } %>
+        </div>
+        <% for(var i=0;i<books.length;i++){ %>
+            <% if(i%3 == 0 && i!= 0){ %>
     </div>
     <div class="row">
         <% }else if(i==0){ %>
@@ -58,8 +75,8 @@
 
             </div>
     </div>
-                                        <% include ../partials/footer %>
-            <!--Change profile: 
+    <% include ../partials/footer %>
+        <!--Change profile: 
 <a href="/user/<#%= currentUser.username%>/profile"> Change </a>
 <% books.forEach(function(books){ %>
     <%= books.name %>

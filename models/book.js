@@ -22,7 +22,6 @@ var bookSchema = new mongoose.Schema({
             ref: "User"
         },
         username: String,
-        contactno: String
     },
     category: [
     ]

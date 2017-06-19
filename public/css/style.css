@@ -30,6 +30,14 @@
     padding-left:10px;
 }
 
+html{
+    height: auto;
+}
+
+.footer{
+    bottom: 0;
+    width: 100%;
+}
 /*.row.match-my-cols {
     overflow: hidden; 
 }

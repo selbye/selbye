@@ -38,16 +38,16 @@ router.get("/user/:id", findBook);
 
 
 router.get("/user/:id/profile", checkProfileOwnership, function (req, res) {
-    User.find({ "username": req.params.id }, function (err, foundUname) {
+    User.findOne({ "username": req.params.id }, function (err, foundUname) {
         if (err) {
             console.log(err)
             req.flash("error", "Error. Please try again")
             res.redirect("/books")
         } else {
-            if (foundUname.length > 0) {
-                res.render("users/profile", { emailGiven: true });
+            if (foundUname.email) {
+                res.render("users/profile", { emailGiven: true,user:foundUname });
             } else {
-                res.render("users/profile", { emailGiven: false });
+                res.render("users/profile", { emailGiven: false,user:foundUname });
             }
         }
     })

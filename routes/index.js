@@ -76,7 +76,7 @@ router.post("/register", function (req, res) {
             res.redirect("/books")
         }
         passport.authenticate("local")(req, res, function () {
-            res.redirect("back");
+            res.redirect("/user/"+req.body.username+"/profile");
         })
     })
 })

@@ -76,7 +76,14 @@
                             <p class="text-center"> <i class="fa fa-user" aria-hidden="true"></i>
                                 <%= books.owner.username %>
                             </p>
-                            <p class="left-space"> Contact: <%= books.owner.contactno %> <br> Area:<%= books.locality %>
+                            <p class="left-space">
+                            <% if(user.isVisible == true){ %>
+                             Contact: <%= user.contactno %> 
+                            <% } %>
+                            <br> Email: <%= user.email %>
+                            <br> City: <%= books.city %>
+                            <br> Area:<%= books.locality %>
+                            </p>
                             <div class="text-center"><a href="/user/<%= books.owner.username %>">Browse other books by
                                 <%= books.owner.username %> </a>
                             </div>

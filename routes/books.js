@@ -3,48 +3,49 @@ var router = express.Router();
 var fs = require("file-system"),
     multer = require('multer')
 var User = require("../models/user"),
-    Category = require("../models/categories")
-Book = require("../models/book");
+    Category = require("../models/categories"),
+    Book = require("../models/book"),
+    jimp = require('jimp')
+uuid = require('uuid')
 
-router.use(function (req, res, next) {
-    // console.log(city);
-    // // res.locals.location = location
-    // res.locals.currentUser = req.user;
-    // currUsr = res.locals.currentUser;
-    // //if logged in then this: else currentUser isequals undefined
-    // if (currUsr != undefined) {
-    //     //store currentUser in temp_user
-    //     temp_user = currUsr.username;
-    //     // temp_user = currUsr.username;
-    //     // temp_user2    = window.temp_user;
-    // }
-    next();
-})
+var multerOptions = {
+    storage: multer.memoryStorage(),
+    fileFilter(req, file, next) {
+        var isPhoto = file.mimetype.startsWith("image/")
+        if (isPhoto) {
+            next(null, true)
+        } else {
+            req.flash("error", "File type not allowed")
+        }
+    }
+}
+var upload = multer(multerOptions)
 
+function resize(req, res, next) {
+    if (!req.file) {
+        next()
+    } else {
+        var extension = req.file.mimetype.split('/')[1]
+        req.body.photo =uuid.v4() + "." + extension
+        fs.mkdir("images/" + temp_user)
+        // console.log(req.body.photo)
+        // var photo = jimp.read(req.file.buffer)
+        // console.log(photo)
+        jimp.read(req.file.buffer, function (err, image) {
+            image.resize(600, jimp.AUTO)
+            image.write("images/" + temp_user+"/"+ req.body.photo)
+        })
 
+        // photo.resize(600, jimp.AUTO)
+        next()
+    }
+}
 
 router.get("/", function (req, res) {
     //res.send("success")
     res.redirect("/books")
 })
 
-// var upload = multer({dest:'uploads/'});
-var storage = multer.diskStorage({
-    destination: function (request, file, callback) {
-        //fs.mkdir will create new directory at /images/username for each user
-        fs.mkdir("images/" + temp_user)
-        //call back will store image at /images/username
-        callback(null, "images/" + temp_user);
-    },
-    filename: function (request, file, callback) {
-        if (file.originalname) {
-            file_name = file.originalname;
-            callback(null, file.originalname)
-        }
-        //   callback(null, request.Book.id.toString())
-    }
-});
-var upload = multer({ storage: storage });
 
 //Add new book
 router.get("/books/new", isLoggedIn, function (req, res) {
@@ -67,7 +68,7 @@ router.get("/books/new", isLoggedIn, function (req, res) {
 
 //CREATE BOOK logic
 //upload.single will add new photo
-router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, next) {
+router.post("/books", isLoggedIn, upload.single('photo'), resize, function (req, res, next) {
     var name = req.body.name,
         price = req.body.price,
         desc = req.body.desc,
@@ -83,7 +84,6 @@ router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, ne
     var owner = {
         id: req.user._id,
         username: req.user.username,
-        contactno: req.user.contactno
     }
     category = [
         req.body.category,
@@ -91,14 +91,14 @@ router.post("/books", isLoggedIn, upload.single('photo'), function (req, res, ne
     ]
     try {
         //image path from /images/username/filename directory
-        var image = ("/" + temp_user + "/" + file_name);
+        var image = ("/"+ temp_user +"/"+ req.body.photo);
         var newBook = {
             name: name, price: price, desc: desc, image: image,
             pages: pages, author: author, publisher: publisher, ISBN: ISBN, city: city, locality: locality, owner: owner, category: category
         }
     } catch (err) {
         var newBook = {
-            name: name, price: price, desc: desc, image: image,
+            name: name, price: price, desc: desc,
             pages: pages, author: author, publisher: publisher, ISBN: ISBN, city: city, locality: locality, owner: owner, category: category
         }
     }
@@ -136,7 +136,7 @@ router.delete("/books/:id", checkBookOwnership, function (req, res) {
         if (err) {
             console.log(err)
         } else {
-            req.flash("error", "Error deleting your book.Please try again.")
+            req.flash("success", "Book deleted")
             res.redirect("/books")
         }
     })
@@ -149,7 +149,13 @@ router.get("/books/:id", function (req, res) {
             console.log(err)
             req.flash("error", "Error")
         } else {
-            res.render("books/show.ejs", { books: foundBook });
+            User.findOne({ "username": foundBook.owner.username }, function (err, foundUser) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.render("books/show.ejs", { books: foundBook, user: foundUser });
+                }
+            })
         }
     })
 })
